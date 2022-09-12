@@ -1,0 +1,19 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% block title %} 4x4 Pump Buy Signal Dev {% endblock %}
+
+{% block content %}
+<h2> The 4x4 Pump Buy Signal Dev strategy </h2>
+<p><h4>Basic settings for this strategy</h4></p><br>
+<p> BUY SIGNAL : 4x4 PUMP</p>
+<p>
+N=4	we instruct the bot to anaylize the last 5 candles<br>
+X=0	<br>
+R=100      at least 100% of 4 candles are green <br>
+P=4</p>
+
+<p>SELL WHEN: <br>
+ROI = (5% at time =0,  1% at time =5 min) <br>
+STOP-LOSS = 3% </p><br>
+
+<p> All rights reserved &laquo; Christian &raquo; </p>
+{% endblock %}

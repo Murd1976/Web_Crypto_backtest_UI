@@ -1,0 +1,22 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% block title %} N Red Candles Buy Signal Dev {% endblock %}
+
+{% block content %}
+<h2> The N Red Candles Buy strategy </h2>
+<p><h4>Basic settings for this strategy</h4></p><br>
+<p> BUY SIGNAL : N RED Candles</p>
+<p>
+It looks that a N red candles sequence is quite common event and not too significative<br><br>
+N=8	we instruct the bot to anaylize the last 8 candles<br>
+X=0	<br>
+R=85      at least 85% of N candles must be red <br>
+P=0</p>
+
+<p>SELL SIGNAL: Candle TRAILING Stop-Loss + Minimum ROI - with these values: <br>
+S = 0.5%<br>
+MR = 1.0%<br>
+ROI = DISABLED (0%)<br>
+User Stop loss = (0 till 32 minutes = -3%, after 32 minutes = -0.3%) </p><br>
+
+<p> All rights reserved &laquo; Christian &raquo; </p>
+{% endblock %}

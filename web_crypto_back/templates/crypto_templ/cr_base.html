@@ -1,0 +1,87 @@
+{% load bootstrap4 %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+      	<meta name="viewport"
+		content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>{% block title %}Crypto{% endblock %} - back test </title>
+		{% bootstrap_css %}
+      	<link rel= "stylesheet" type= "text/css" href= "{% static 'my_css/cr_style.css' %}">
+		{% bootstrap_javascript jquery='slim' %}
+	</head>
+  	<body class= "container-fluid">
+		<header class= "mb-4">
+          <h1 class= "display-1 text-center"> Crypto strategies </h1>
+		</header>
+		<div class="row border" >
+          	<ul class="col nav justify-content-start ">
+              <li class="nav-item root"><a class="nav-link" href="{% url 'crypto_back:index' %}">Home</a></li>
+              <li class="nav-item root"><a class= "nav-link" href= "{% url 'crypto_back:other' page='cr_about' %}"> About </a></li>
+              
+          	</ul>
+			<ul class="col nav justify-content-end ">
+				{% if user.is_authenticated %}              
+              	<li class= "nav-item dropdown">
+                	<a class= "nav-link dropdown-toggle" data-toggle= "dropdown" href= "#" role= "button" aria-haspopup= "true" aria-expanded= "false"> Profile </a>
+				
+					<div class="dropdown-menu">
+                      <a class= "dropdown-item" href= "{% url 'crypto_back:my_profile' %}"> User </a>
+                      <a class= "dropdown-item" href= "{% url 'crypto_back:my_profile_change' %}"> Change personal data </a>
+                      <a class= "dropdown-item" href= "{% url 'crypto_back:my_password_change' %}"> Change password </a>
+                      <div class= "dropdown-divider"></div>
+                      <a class= "dropdown-item" href= "{% url 'crypto_back:my_logout' %}"> Logout </a>
+                      <div class= "dropdown-divider"></div>
+                      <a class= "dropdown-item" href= "{% url 'crypto_back:my_profile_delete' %}"> Delete </a>
+					
+					</div>
+				</li>
+              	{% else %}
+              	<li class="nav-item"><a class="nav-link" href= "{% url 'crypto_back:my_login' %}"> Login </a></li>
+              	{% endif %}
+              	<li class="nav-item"><a class="nav-link" href="{% url 'crypto_back:my_register' %}">Register</a></li>
+              	
+			</ul>
+		</div>
+      	<div class= "row">
+          <nav class= "col-md-auto nav flex-column border">
+            {% if user.is_authenticated %}
+            <li class="nav-item root"><a class="nav-link" href="{% url 'crypto_back:my_choise_strategy' %}">BackTest</a></li>
+			<li class="nav-item root"><a class="nav-link" href="{% url 'crypto_back:my_create_report' %}">Create report</a></li>
+            {% endif %}
+            
+            <span class= "nav-link root font-weight-bold"> Strategies </span>
+            	<ul>
+            		<a class= "nav-link" href= "{% url 'crypto_back:other' page='cr_st_curve_inversion' %}"> Curve Inversion </a>
+           	 		<a class= "nav-link" href= "{% url 'crypto_back:other' page='cr_st_n_green_candles' %}"> N Green Candles </a>
+            		<a class= "nav-link" href= "{% url 'crypto_back:other' page='cr_st_4_4_pump' %}"> 4x4 Pump </a>
+					<a class= "nav-link" href= "{% url 'crypto_back:other' page='cr_st_4_4_pump_v3' %}"> 4x4 Pump trailing Stop-loss</a>
+            		<a class= "nav-link" href= "{% url 'crypto_back:other' page='cr_st_n_red_candles' %}"> N Red Candles </a>
+            		<a class= "nav-link" href= "{% url 'crypto_back:other' page='cr_st_5_5_pump' %}"> 5x5 Pump </a>
+            	</ul>  
+            
+            {% if user.is_authenticated %}
+            <span class= "nav-link root font-weight-bold"> Reports </span>
+            <ul>
+            	<a class= "nav-link" href= "{% url 'crypto_back:my_txt_reports' %}"> Summary report </a>
+            	<a class= "nav-link" href= "{% url 'crypto_back:my_xlsx_reports' %}"> Pre/Post analysis </a>
+            </ul>
+            <li class="nav-item root"><a class="nav-link" href="{% url 'crypto_back:my_tests_list' %}">Tests list</a></li>
+            {% endif %}
+            
+          </nav>
+          <section class= "col border py-2">
+            {% bootstrap_messages %}
+            {% block content %}
+            {% endblock %}
+          </section>
+      	</div>
+		<footer class="mt-3">
+			<p class="text-right font-italic">&copy; Murd.</p>
+		</footer>
+	</body>
+</html>  
+
+
+

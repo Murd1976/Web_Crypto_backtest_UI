@@ -1,0 +1,35 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% load bootstrap4 %}
+
+{% block title %} Choise result file {% endblock %}
+
+{% block content %}
+<h2> Create report </h2>
+<div class="conteiner-fluid mb-2 border">
+<form method="POST" novalidate="novalidate">
+  {% csrf_token %}
+  <div class="row-fluid mb-2">
+	<div class="col">
+		<div class="row">&nbsp</div>
+		<div class="row ml-4">
+			{{ form.f_reports.label_tag }}
+		</div>
+		<div class="row ml-4">
+			{{ form.f_reports }}<br>
+		</div>
+		<div class="row">&nbsp</div>
+		<div class="row mb-4 ml-4">
+			{% buttons submit="Ok" %} {% endbuttons %}
+		</div>
+	</div>
+  </div>
+  
+  <div class="row border">
+    <div class="col-fluid">
+		{{ form.f_text_log }}
+    </div>
+  </div>
+  
+</form>
+</div>
+{% endblock %}

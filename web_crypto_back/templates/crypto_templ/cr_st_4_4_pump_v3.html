@@ -1,0 +1,21 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% block title %} 4x4 Pump Buy Signal Dev {% endblock %}
+
+{% block content %}
+<h2> The 4x4 Pump Buy Signal Dev strategy with Candle TRAILING Stop-Loss </h2>
+<p><h4>Basic settings for this strategy</h4></p><br>
+<p> BUY SIGNAL : 4x4 PUMP</p>
+<p>
+N=4	we instruct the bot to anaylize the last 5 candles<br>
+X=0	<br>
+R=100      at least 100% of 4 candles are green <br>
+P=4</p>
+
+<p>SELL SIGNAL: Candle TRAILING Stop-Loss + Minimum ROI - with these values: <br>
+S = 0.5%<br>
+MR = 1%<br>
+ROI = DISABLED (0%)<br>
+User Stop loss = (0 till 32 minutes = -5%, after 32 minutes = -0.3%) </p><br>
+
+<p> All rights reserved &laquo; Christian &raquo; </p>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% block title %} Curve Inversion strategy {% endblock %}
+
+{% block content %}
+<h2> The Curve Inversion strategy </h2>
+<p><h4>Basic settings for this strategy</h4></p><br>
+<p> BUY SIGNAL : CURVE INVERSION</p>
+<p>
+N=14	we instruct the bot to anaylize the last 14 candles<br>
+X=2	<br>
+R=90      at least 90% of (14-2=12) candles are red, that means at least 11 candles are red <br>
+P=4</p>
+
+<p>SELL SIGNAL: Candle TRAILING Stop-Loss + Minimum ROI - with these values: <br>
+S = 0.2%<br>
+MR = 0.4%<br>
+ROI = 1%<br>
+User Stop loss = (0 till 32 minutes = -2%, after 32 minutes = -0.3%) </p><br>
+
+<p> All rights reserved &laquo; Christian &raquo; </p>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% load bootstrap4 %}
+
+{% block title %} Choise result file {% endblock %}
+
+{% block content %}
+<h2> List of tests for {{user_name}}</h2>
+<div class="conteiner-fluid mb-2 border">
+
+<table border="1" colspan="2" width="100%">
+   <tr>
+     <th>Strategy name </th>
+	 <th>Owner</th>
+	 <th>Data</th>
+     <th>Parts</th> 
+	 <th>arg_N</th>
+	 <th>Delete</th>
+   </tr>
+ {% for record in tests_list %}
+   <tr>
+     <td>{{record.strategy_name}}</td>
+	 <td>{{record.owner}}</td>
+	 <td>{{record.created_at}}</td>
+	 <td align="center">{{record.parts}}</td>
+	 <td align="center">{{record.arg_N}}</td>
+	 <td align="center"><a href="delete/{{record.id}}" style="text-decoration:None">Delete record</a></td>
+   </tr>
+ {% endfor %}  
+</table>
+
+</div>
+{% endblock %}

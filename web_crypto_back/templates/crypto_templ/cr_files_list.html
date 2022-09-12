@@ -1,0 +1,26 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% load bootstrap4 %}
+
+{% block title %} Choise result file {% endblock %}
+
+{% block content %}
+<h2> List of report files</h2>
+<div class="conteiner-fluid mb-2 border">
+
+<table border="1" colspan="2" width="100%">
+   <tr>
+     <th width="50%" align="center">{{user_name}} File </th>
+     <th width="25%" align="center">Download</th> 
+	 <th width="25%" align="center">Delete</th>
+   </tr>
+ {% for file in total_files %}
+   <tr>
+     <td width="50%">{{file}}</td>
+     <td width="25%" align="center"><a href="/download/?file_name={{file}}" style="text-decoration:None">Download here</a></td>
+	 <td width="25%" align="center"><a href="delete/{{file}}" style="text-decoration:None">Delete file</a></td>
+   </tr>
+ {% endfor %}  
+</table>
+
+</div>
+{% endblock %}
