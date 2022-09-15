@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import json
 import time
-import PySimpleGUI as sg
+#import PySimpleGUI as sg
 import paramiko
 #import talib
 
@@ -333,7 +333,7 @@ class rep_from_test_res():
         			res_df['av_max_rate'].iloc[-1] = max_r
         			res_df['av_min_rate'].iloc[-1] = min_r
 
-        			sg.one_line_progress_meter('Creatin report in progress...', bar_step+z*len(self.N_candle_analyze)+len(self.N_pre_candle_analyze)*len(buf_df)+cc+1, bar_len, 'Count...', orientation='h')
+#        			sg.one_line_progress_meter('Creatin report in progress...', bar_step+z*len(self.N_candle_analyze)+len(self.N_pre_candle_analyze)*len(buf_df)+cc+1, bar_len, 'Count...', orientation='h')
 
 	# PRE BUY ANALYSIS
         		if len(self.N_pre_candle_analyze) > 1:

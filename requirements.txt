@@ -1,2 +1,9 @@
-(python3-env) $ pip install celery>=4.4.5
+//for django main progect
+pip install django 
+pip install easy_thumbnails
+pip install bootstrap4
+(python3-env) $ pip install celery
 (python3-env) $ pip install celery-progress
+
+//for application
+pip install paramiko
