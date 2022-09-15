@@ -8,7 +8,7 @@
 
 {% block content %}
 <h2 class="mb-2"> Back testing </h2>
-<div class="conteiner-fluid mb-2">
+<div class="conteiner-fluid">
 <form name="BackTestQuery" method="POST" novalidate="novalidate">
   {% csrf_token %}
   <div class="row border">
@@ -38,7 +38,7 @@
 	   {{ form.f_parts.label_tag }}
   	   {{ form.f_parts }}
 	</div>
-  </div>	    
+  </div>	
 
   <div class="row border">
     <div class="col-6 border">
@@ -200,10 +200,10 @@
 				<label>%</label>
 			</div>
 		</div>
-      	<div class="row">&nbsp</div>
+      	<div class="row">&nbsp </div>
 	</div>
 	<div class="col ">
-		<div class="row">&nbsp</div>
+		<div class="row">&nbsp </div>
 		<div class="row">
 			<div class="col-auto">
 				{{ form.f_movement_roi.label_tag }}
@@ -219,11 +219,11 @@
   <div class="row border">
     <div class="col-fluid">
 		{{ form.f_text_log }}
-    </div>
+    </div>	
   </div>
   
-  <div class="row border">
-    <div class="col-fluid">
+  <div class="row">
+    <div class="col-6">
 		{% buttons submit="Run test" %} {% endbuttons %}
 	</div>
   </div>

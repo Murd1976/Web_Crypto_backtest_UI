@@ -1,12 +1,33 @@
 {% extends "crypto_templ/cr_base.html" %}
 {% load bootstrap4 %}
 
+<head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+</head>
+
+<style>
+    .not-visible{
+        display: none;
+    }
+</style>
+
 {% block title %} Choise result file {% endblock %}
 
 {% block content %}
 <h2> Create report </h2>
+
 <div class="conteiner-fluid mb-2 border">
-<form method="POST" novalidate="novalidate">
+<form action="{% url 'crypto_back:my_create_report' %}" method="POST" novalidate="novalidate" id="create_report_form">
   {% csrf_token %}
   <div class="row-fluid mb-2">
 	<div class="col">
@@ -18,18 +39,75 @@
 			{{ form.f_reports }}<br>
 		</div>
 		<div class="row">&nbsp</div>
-		<div class="row mb-4 ml-4">
+		<div class="row mb-4 ml-4" id='progress-bar-trigger'>
 			{% buttons submit="Ok" %} {% endbuttons %}
 		</div>
 	</div>
   </div>
   
-  <div class="row border">
+  <div class="row-fluid border">
     <div class="col-fluid">
 		{{ form.f_text_log }}
     </div>
   </div>
   
 </form>
+
 </div>
-{% endblock %}
+
+<!-- Task Status -->
+<div class="container" style="padding-top: 20px;">
+	<div class="card" style="height: 120px;">
+		<div class="text-center" style="font-size: 14px">
+			<div id="progress-bar-message">
+			Click the "Download" button
+			</div>
+		</div>
+		<div class='progress-wrapper' style="padding-top: 10px;">
+			<div id='progress-bar' class='progress-bar progress-bar-striped' role='progressbar' style="height:20px; width: 0%; border-radius: 5px">&nbsp;</div>
+		</div>
+		<div id="celery-result">
+		</div>
+	</div>
+</div>
+
+<div class="container progress" id="progress">
+{% endblock content %}
+
+{% block progress_bar_js %}
+{% if task_id %}
+<script type="text/javascript">
+	function updateProgress(progressBarElement, progressBarMessageElement, progress) {
+		progressBarElement.style.backgroundColor = '#68a9ef';
+		progressBarElement.style.width = progress.percent + "%";
+		progressBarMessageElement.innerHTML = progress.current + ' of ' + progress.total + ' processed.';
+	}
+	
+	var trigger = document.getElementById('progress-bar-trigger');
+	//trigger.addEventListener('click', function(e) {
+	$("#create_report_form").submit(function(e){
+		var barWrapper = document.getElementById('progress-wrapper');
+		barWrapper.style.display = 'inherit'; // show bar
+		var bar = document.getElementById("progress");
+		var barMessage = document.getElementById("progress-bar-message");
+		for (var i = 0; i < 11; i++) {
+			const percentProgress = 10 * i;
+			bar.innerHTML = `<div class="progress-bar progress-bar-striped bg-success" 
+                    role="progressbar" style="width: ${percentProgress}%" aria-valuenow="${percentProgress}" aria-valuemin="0" 
+                    aria-valuemax="100"></div>`
+			setTimeout(updateProgress, 500, bar, barMessage, {
+			percent: 10 * i,
+			current: 10 * i,
+			total: 100
+			})
+		}
+	})
+
+	// Progress Bar (JQuery)
+	$(function () {
+		var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+		CeleryProgressBar.initProgressBar(progressUrl, {})
+	});
+</script>
+{% endif %}
+{% endblock progress_bar_js %}

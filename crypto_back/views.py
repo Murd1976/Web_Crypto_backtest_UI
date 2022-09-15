@@ -23,6 +23,8 @@ from .models import AdvUser, AllBackTests, DataBufer
 from .utilities import signer
 from .main_web import ExampleApp
 from .strategies_list import Available_strategies
+# Celery Task
+from .tasks import ProcessDownload
 
 
 class BBLoginView(LoginView):
@@ -328,11 +330,20 @@ def create_report_page(request):
                 
         if userform.is_valid():
             text_buf = dict(reports_list)[str(userform.cleaned_data["f_reports"])]
+
+            # Create Task
+            download_task = ProcessDownload.delay(10)
+            # Get ID
+            task_id = download_task.task_id
+            # Print Task ID
+            print(f'Celery Task ID: {task_id}')
+            # Return demo view with Task ID
+            
             name=str(request.user)
-            ui_utils.run_report(text_buf, 'local', name)
+#            ui_utils.run_report(text_buf, 'local', name)
             parts = CreateReportForm(reports_list, initial= {"f_text_log":str(ui_utils.list_info)})
 #            parts.fields['f_reports'].choices = reports_list		
-            context = {"form": parts}
+            context = {"form": parts, 'task_id': task_id}
             return render(request, template, context)
         
     parts = CreateReportForm(reports_list, initial= {"f_text_log":str(ui_utils.list_info)})    

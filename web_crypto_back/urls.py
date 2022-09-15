@@ -22,6 +22,8 @@ from django.views.decorators.cache import never_cache
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('crypto_back.urls')),
+    # Celery progress
+    path('celery-progress/', include('celery_progress.urls')),
 ]
 
 if settings.DEBUG:

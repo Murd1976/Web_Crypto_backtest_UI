@@ -53,6 +53,8 @@ INSTALLED_APPS = [
 #    'filer',
     'easy_thumbnails',
     'bootstrap4',
+    'celery',
+    'celery_progress',
 #    'djangocms_bootstrap4',
 #    'djangocms_bootstrap4.contrib.bootstrap4_alerts',
 #    'djangocms_bootstrap4.contrib.bootstrap4_badge',
@@ -167,4 +169,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'web_crypto_back', 'static')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Celery Settings
+BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
 
