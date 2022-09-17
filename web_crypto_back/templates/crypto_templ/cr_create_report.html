@@ -71,13 +71,12 @@
 	</div>
 </div>
 
-<div class="container progress" id="progress">
 {% endblock content %}
 
 {% block progress_bar_js %}
 {% if task_id %}
 <script type="text/javascript">
-	function updateProgress(progressBarElement, progressBarMessageElement, progress) {
+/*	function updateProgress(progressBarElement, progressBarMessageElement, progress) {
 		progressBarElement.style.backgroundColor = '#68a9ef';
 		progressBarElement.style.width = progress.percent + "%";
 		progressBarMessageElement.innerHTML = progress.current + ' of ' + progress.total + ' processed.';
@@ -102,7 +101,7 @@
 			})
 		}
 	})
-
+*/
 	// Progress Bar (JQuery)
 	$(function () {
 		var progressUrl = "{% url 'celery_progress:task_status' task_id %}";

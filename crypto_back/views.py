@@ -340,7 +340,7 @@ def create_report_page(request):
             # Return demo view with Task ID
             
             name=str(request.user)
-            ui_utils.run_report(text_buf, 'local', name)
+#            ui_utils.run_report(text_buf, 'local', name)
             parts = CreateReportForm(reports_list, initial= {"f_text_log":str(ui_utils.list_info)})
 #            parts.fields['f_reports'].choices = reports_list		
             context = {"form": parts, 'task_id': task_id}

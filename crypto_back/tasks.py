@@ -24,4 +24,4 @@ def ProcessDownload(self, seconds):
 		progress_recorder.set_progress(i + 1, seconds, description="Calculating...")
 	print('End')
 
-	return result
+	return res
