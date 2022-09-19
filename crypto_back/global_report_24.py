@@ -6,6 +6,7 @@ import time
 #import PySimpleGUI as sg
 import paramiko
 #import talib
+from celery_progress.backend import ProgressRecorder
 
 from .my_ssh import ssh_conf
 
@@ -18,7 +19,12 @@ class rep_from_test_res():
     #f_pair_name = 'BETA_USDT-1m'
     #f_name= 'bc_loss_trail_roi_4_4_p4-2022-04-15_15-52-33'
     #cur_strategy = 'MyLossTrailingMinROI_4_4'
-
+    
+    bar_len = 100
+    bar_step = 0
+    cur_progress = 0
+#    progress_recorder = ProgressRecorder()
+    
     N_strategy = 0
 
     N_candle_analyze = np.array([1,3,5,10,15,30]) #number of Candles to analyze after the buy trigger
@@ -139,18 +145,7 @@ class rep_from_test_res():
    
         return round(max_p, 3), round(min_p, 3)
 
-    #чтение свечей из заданного файла, с заданным time_rate
-    def get_pair_fdata(self, f_name, time_rate):
-
-        col_names=["date", "open", "high", "low", "close", "volume"]
-        f_name=f_name+'-'+time_rate+'.json'
-
-#        hostname = "gate.controller.cloudlets.zone"
-        
-#        port = 3022
-#        username = "7441-732"
-#        directory = '/root/application/user_data/data/binance/'
-        
+    def get_ssh_connect(self):
         try:        
             client = paramiko.SSHClient()
          # Автоматически добавлять стратегию, сохранять имя хоста сервера и ключевую информацию
@@ -161,6 +156,30 @@ class rep_from_test_res():
         except:
             print('Error connection')
             return('error')
+        return client
+    
+    #чтение свечей из заданного файла, с заданным time_rate
+    def get_pair_fdata(self, f_name, time_rate, client):
+
+        col_names=["date", "open", "high", "low", "close", "volume"]
+        f_name=f_name+'-'+time_rate+'.json'
+
+#        hostname = "gate.controller.cloudlets.zone"
+        
+#        port = 3022
+#        username = "7441-732"
+#        directory = '/root/application/user_data/data/binance/'
+        
+#        try:        
+#            client = paramiko.SSHClient()
+         # Автоматически добавлять стратегию, сохранять имя хоста сервера и ключевую информацию
+#            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#            private_key = paramiko.RSAKey.from_private_key_file('RSA_private_1.txt')
+         # подключиться к серверу
+#            client.connect(ssh_conf.hostname, ssh_conf.port, ssh_conf.username, pkey=private_key, timeout=3, disabled_algorithms=dict(pubkeys=['rsa-sha2-256', 'rsa-sha2-512']))
+#        except:
+#            print('Error connection')
+#            return('error')
         
         
 
@@ -255,19 +274,25 @@ class rep_from_test_res():
         pd.options.mode.chained_assignment = None  # default='warn'
         #print(f_name+' in progress!')
 
-        bar_len = len(df)*(len(self.N_candle_analyze)+len(self.N_pre_candle_analyze))
+        self.bar_len = len(df)*(len(self.N_candle_analyze)+len(self.N_pre_candle_analyze))
+        self.one_percent = self.bar_len/100
         #print('Len', bar_len)
-        bar_step = 0;
+        self.bar_step = 0;
         idnex_count = 0;
+
+        for i in range(3):
+            ssh_connect = self.get_ssh_connect()
+            if ssh_connect != 'error':
+                break
 
         for ii, i in enumerate(df_pairs): #проходим по всему списку уникальных имен пар
         	buf_df=df.loc[df['pair'] == i] # датафрейм с трейдами для текущего, уникального, названия пары
         	f_pair_name = i.replace('/', '_')
         	#print(buf_df)
                 #f_pair_name=work_path+'/data/binance'+'/'+i.replace('/', '_')
-        	df_pair_1m = self.get_pair_fdata(f_pair_name, '1m')
-        	df_pair_1h = self.get_pair_fdata(f_pair_name, '1h')
-        	df_pair_1d = self.get_pair_fdata(f_pair_name, '1d')
+        	df_pair_1m = self.get_pair_fdata(f_pair_name, '1m', ssh_connect)
+        	df_pair_1h = self.get_pair_fdata(f_pair_name, '1h', ssh_connect)
+        	df_pair_1d = self.get_pair_fdata(f_pair_name, '1d', ssh_connect)
 
         	df_pair_1d['volume'] = df_pair_1d['volume']*df_pair_1d['close']
 
@@ -333,6 +358,10 @@ class rep_from_test_res():
         			res_df['av_max_rate'].iloc[-1] = max_r
         			res_df['av_min_rate'].iloc[-1] = min_r
 
+        			self.cur_progress = round((self.bar_step+z*len(self.N_candle_analyze)+len(self.N_pre_candle_analyze)*len(buf_df)+cc+1)/self.one_percent, 2)
+        			# Build description
+        			progress_description = 'Calculating (' + str(self.cur_progress) + '%)'
+        			self.progress_recorder.set_progress(self.cur_progress, 100, description = progress_description)
 #        			sg.one_line_progress_meter('Creatin report in progress...', bar_step+z*len(self.N_candle_analyze)+len(self.N_pre_candle_analyze)*len(buf_df)+cc+1, bar_len, 'Count...', orientation='h')
 
 	# PRE BUY ANALYSIS
@@ -444,7 +473,7 @@ class rep_from_test_res():
 
         		idnex_count += 1
 			
-        	bar_step += len(buf_df)*(len(self.N_candle_analyze)+len(self.N_pre_candle_analyze))
+        	self.bar_step += len(buf_df)*(len(self.N_candle_analyze)+len(self.N_pre_candle_analyze))
         	#print('last step', bar_step)
 
         for cc, n in enumerate(self.N_candle_analyze):

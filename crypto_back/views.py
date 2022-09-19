@@ -21,7 +21,7 @@ from .forms import *
 from .models import AdvUser, AllBackTests, DataBufer
 #from .forms import ChangeUserInfoForm, RegisterUserForm
 from .utilities import signer
-from .main_web import ExampleApp
+from .main_web import BackTestApp
 from .strategies_list import Available_strategies
 # Celery Task
 from .tasks import ProcessDownload
@@ -154,7 +154,7 @@ def delete_tests(request, id):
 @login_required
 def choise_strategy_page(request):
     template = 'crypto_templ/cr_choise_strategy.html'
-#    ui_utils = ExampleApp()
+#    ui_utils = BackTestApp()
 #    strategies_val, reports_val = ui_utils.connect_ssh()
 #    strategies_index = []
 #    reports_index = []
@@ -199,7 +199,7 @@ def choise_strategy_page(request):
 
 @login_required
 def run_test_page(request):
-    ui_utils = ExampleApp()
+    ui_utils = BackTestApp()
     ui_utils.server_user_directory = str(request.user)
     strategies_val, reports_val = ui_utils.connect_ssh()
 #    strategies_index = []
@@ -313,7 +313,7 @@ def run_test_page(request):
 @login_required
 def create_report_page(request):
     template = 'crypto_templ/cr_create_report.html'
-    ui_utils = ExampleApp()
+    ui_utils = BackTestApp()
     ui_utils.server_user_directory = str(request.user)
     strategies_val, reports_val = ui_utils.connect_ssh()
 
@@ -331,15 +331,16 @@ def create_report_page(request):
         if userform.is_valid():
             text_buf = dict(reports_list)[str(userform.cleaned_data["f_reports"])]
 
+            name=str(request.user)
             # Create Task
-            download_task = ProcessDownload.delay(10)
+            download_task = ProcessDownload.delay(text_buf, name)
             # Get ID
             task_id = download_task.task_id
             # Print Task ID
             print(f'Celery Task ID: {task_id}')
             # Return demo view with Task ID
             
-            name=str(request.user)
+            
 #            ui_utils.run_report(text_buf, 'local', name)
             parts = CreateReportForm(reports_list, initial= {"f_text_log":str(ui_utils.list_info)})
 #            parts.fields['f_reports'].choices = reports_list		

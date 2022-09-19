@@ -16,7 +16,7 @@ from .my_ssh import ssh_conf
 from .global_report_24 import rep_from_test_res  # файл с функциями построения отчета
 from .test_json_to_txt import my_reports  # файл с функциями построения форматированного текстового отчета
 
-class ExampleApp():
+class BackTestApp():
 
 #    server_directory = '/home/murd/buf/ft_userdata/'
 #    server_directory = '/root/application'
@@ -53,6 +53,10 @@ class ExampleApp():
     client_directory = ssh_conf.client_directory    
 
     list_info = []
+
+    my_txt_rep = my_reports()   #создаем объект нашего собственного класса my_reports()
+        
+    my_rep = rep_from_test_res() #создаем объект нашего собственного класса rep_from_test_res()
     
     def get_ssh_connect(self, show_info = True):
 
@@ -214,9 +218,9 @@ class ExampleApp():
 
     def run_report(self, backtest_file_name, mode, user_name):
         self.server_user_directory = user_name
-        my_txt_rep = my_reports()   #создаем объект нашего собственного класса my_reports()
+#        my_txt_rep = my_reports()   #создаем объект нашего собственного класса my_reports()
         
-        my_rep = rep_from_test_res() #создаем объект нашего собственного класса rep_from_test_res()
+#        my_rep = rep_from_test_res() #создаем объект нашего собственного класса rep_from_test_res()
         if mode == 'local':
             if not os.path.exists("./reports/" + user_name + "/"):
                 os.mkdir("reports/" + user_name)
@@ -234,14 +238,14 @@ class ExampleApp():
 
             buf_str = backtest_file_name.split('.')
             if mode == 'local':
-              res_report = my_txt_rep.json_to_txt(json_obj, remote_file, mode, self.local_reports_directory + user_name + '/txt/', backtest_file_name)
+              res_report = self.my_txt_rep.json_to_txt(json_obj, remote_file, mode, self.local_reports_directory + user_name + '/txt/', backtest_file_name)
             else:
                 remote_file = sftp.open ('/' + self.server_directory + self.server_backtests_directory+self.server_user_directory + self.server_reports_directory +buf_str[0] + '.txt', mode = 'w') # Путь к файлу
-                res_report = my_txt_rep.json_to_txt(json_obj, remote_file, mode, self.server_reports_directory, backtest_file_name)
+                res_report = self.my_txt_rep.json_to_txt(json_obj, remote_file, mode, self.server_reports_directory, backtest_file_name)
             self.list_info.append("Created report: ")
             self.list_info.append(buf_str[0] + '.txt')
 
-            res_report = my_rep.get_report(json_obj, mode, user_name, self.server_directory + self.server_backtests_directory+self.server_user_directory + self.server_reports_directory, backtest_file_name)
+            res_report = self.my_rep.get_report(json_obj, mode, user_name, self.server_directory + self.server_backtests_directory+self.server_user_directory + self.server_reports_directory, backtest_file_name)
             if res_report == "no_trades":
                 self.list_info.append("Created report error: No trades in test results!")
             else:
