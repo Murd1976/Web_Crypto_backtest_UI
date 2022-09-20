@@ -8,7 +8,7 @@ from .main_web import BackTestApp
 
 # Celery Task
 @app.shared_task(bind=True)
-def ProcessDownload(self, text_buf, name):
+def ProcessReport(self, text_buf, name):
 	print('Task started')
 	# Create the progress recorder instance
 	# which we'll use to update the web page
@@ -16,7 +16,7 @@ def ProcessDownload(self, text_buf, name):
 
 	ui_utils = BackTestApp()
 	ui_utils.my_rep.progress_recorder = ProgressRecorder(self)
-	res = 0
+	
 	print('Start')
 #	for i in range(seconds):
 		# Sleep for 1 second
@@ -34,5 +34,29 @@ def ProcessDownload(self, text_buf, name):
 #	progress_recorder.set_progress(ui_utils.my_rep.cur_progress, ui_utils.my_rep.bar_len, description="Calculating...")
 	print(ui_utils.my_rep.cur_progress)
 	print('End')
+	res = 'end'
+	
+	return res
 
+@app.shared_task(bind=True)
+def ProcessBackTest(self, strategy_settings, name):
+	print('Task started')
+	# Create the progress recorder instance
+	# which we'll use to update the web page
+
+	ui_utils = BackTestApp()
+	ui_utils.progress_recorder = ProgressRecorder(self)
+	
+	print('Start')
+		
+		# Print progress in Celery task output
+	print(ui_utils.cur_progress)
+		
+
+	ui_utils.run_backtest(strategy_settings, name)
+
+	print(ui_utils.cur_progress)
+	print('End')
+	res = 'end'
+	
 	return res

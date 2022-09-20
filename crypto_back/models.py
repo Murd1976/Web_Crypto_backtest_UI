@@ -28,8 +28,8 @@ class AllBackTests(models.Model	):
     arg_P =  models.IntegerField(verbose_name="Price incriase in N candles (P)")
     arg_MR =  models.DecimalField(max_digits=2, decimal_places=1, verbose_name="Movement ROI (MR)")
     stoploss = models.DecimalField(max_digits=2, decimal_places=1, verbose_name="Stop-loss (after 0 min)")
-    my_stoploss_time = models.IntegerField(verbose_name="My Stop-loss (after [n] min)")
-    my_stoploss_value = models.DecimalField(max_digits=2, decimal_places=1, verbose_name="My Stop-loss (after [n] min)")
+    my_stoploss_time = models.IntegerField(verbose_name="My Stop-loss time (after [n] min)")
+    my_stoploss_value = models.DecimalField(max_digits=2, decimal_places=1, verbose_name="My Stop-loss value (after [n] min)")
     arg_stoploss =  models.DecimalField(max_digits=2, decimal_places=1, verbose_name="Dsired Stop-loss value (S)")
     text_log = models.TextField(verbose_name="Loggin text")
     

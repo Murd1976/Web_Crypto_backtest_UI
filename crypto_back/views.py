@@ -24,7 +24,7 @@ from .utilities import signer
 from .main_web import BackTestApp
 from .strategies_list import Available_strategies
 # Celery Task
-from .tasks import ProcessDownload
+from .tasks import ProcessReport, ProcessBackTest
 
 
 class BBLoginView(LoginView):
@@ -252,19 +252,19 @@ def run_test_page(request):
             p.append(userform.cleaned_data["f_persent_same"])
                         
             p.append(userform.cleaned_data["f_min_roi_time1"])
-            p.append(userform.cleaned_data["f_min_roi_value1"])
+            p.append(float(userform.cleaned_data["f_min_roi_value1"]))
             p.append(userform.cleaned_data["f_min_roi_time2"])
-            p.append(userform.cleaned_data["f_min_roi_value2"])
+            p.append(float(userform.cleaned_data["f_min_roi_value2"]))
             p.append(userform.cleaned_data["f_min_roi_time3"])
-            p.append(userform.cleaned_data["f_min_roi_value3"])
+            p.append(float(userform.cleaned_data["f_min_roi_value3"]))
             p.append(userform.cleaned_data["f_min_roi_time4"])
-            p.append(userform.cleaned_data["f_min_roi_value4"])
-            
-            p.append(userform.cleaned_data["f_movement_roi"])
-            p.append(userform.cleaned_data["f_des_stop_loss"])
-            p.append(userform.cleaned_data["f_stop_loss"])
+            p.append(float(userform.cleaned_data["f_min_roi_value4"]))
+
+            p.append(float(userform.cleaned_data["f_movement_roi"]))
+            p.append(float(userform.cleaned_data["f_des_stop_loss"]))
+            p.append(float(userform.cleaned_data["f_stop_loss"]))
             p.append(userform.cleaned_data["f_my_stop_loss_time"])
-            p.append(userform.cleaned_data["f_my_stop_loss_value"])
+            p.append(float(userform.cleaned_data["f_my_stop_loss_value"]))
             p.append(userform.cleaned_data["f_text_log"])
             
             p.append(request.user)
@@ -276,15 +276,25 @@ def run_test_page(request):
             back_test_record.save()
 
             strategy_settings = dict(list(zip(strategy_keys, p)))
+            
             name=str(request.user)
-            ui_utils.run_backtest(strategy_settings, name)
+            # Create Task
+            back_test_task = ProcessBackTest.delay(strategy_settings, name)
+            # Get ID
+            task_id = back_test_task.task_id
+            # Print Task ID
+            print(f'Celery Task ID: {task_id}')
+            print(back_test_task)
+            # Return demo view with Task ID
+            
+#            ui_utils.run_backtest(strategy_settings, name)
             strategy_settings['f_strategies'] = dict(strategies_list)[user_strategy_choise]
             strategy_settings["f_text_log"] = str(request.user) + '/ ' + str(ui_utils.list_info)
 #            parts = BackTestForm(initial={"f_text_log":str(request.user) + '/ ' + str(ui_utils.list_info)})
             parts = BackTestForm(initial= strategy_settings)
 
             parts.fields['f_reports'].choices = reports_list		
-            context = {"form": parts}
+            context = {"form": parts, 'task_id': task_id}
             return render(request, template, context)
 #            return HttpResponse("<h2>Hello, {0} :{1} :{2} </h2>".format(text_buf, strategies_list[1], nnn))
         else:
@@ -333,9 +343,9 @@ def create_report_page(request):
 
             name=str(request.user)
             # Create Task
-            download_task = ProcessDownload.delay(text_buf, name)
+            report_task = ProcessReport.delay(text_buf, name)
             # Get ID
-            task_id = download_task.task_id
+            task_id = report_task.task_id
             # Print Task ID
             print(f'Celery Task ID: {task_id}')
             # Return demo view with Task ID

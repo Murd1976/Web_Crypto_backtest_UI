@@ -23,7 +23,7 @@ class rep_from_test_res():
     bar_len = 100
     bar_step = 0
     cur_progress = 0
-#    progress_recorder = ProgressRecorder()
+    one_percent = 1
     
     N_strategy = 0
 
@@ -276,7 +276,7 @@ class rep_from_test_res():
 
         self.bar_len = len(df)*(len(self.N_candle_analyze)+len(self.N_pre_candle_analyze))
         self.one_percent = self.bar_len/100
-        #print('Len', bar_len)
+        
         self.bar_step = 0;
         idnex_count = 0;
 

@@ -102,12 +102,12 @@ class BackTestForm(forms.Form):
     
 #    f_roi_flags = forms.MultipleChoiceField(label="Choise pairs part:", initial=1, choices=((1, "ROI 1"), (2, "ROI 2"), (3, "ROI 3"), (4, "ROI 4")), widget=forms.CheckboxSelectMultiple, required=False)
     
-    f_des_stop_loss = forms.DecimalField(label="Dsired Stop-loss value (S):", initial=0.5, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
-    f_stop_loss = forms.DecimalField(label="Stop-loss (after 0 min):", initial=3.0, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_des_stop_loss = forms.DecimalField(label="Dsired Stop-loss value (S):", min_value=0, max_value=100, initial=0.5, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_stop_loss = forms.DecimalField(label="Stop-loss (after 0 min):", min_value=0, max_value=100, initial=3.0, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     f_my_stop_loss_time = forms.IntegerField(label="My Stop-loss (after [n] min):", initial=32,  min_value=0, max_value=60, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     f_my_stop_loss_value = forms.DecimalField(initial=0.1, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     
-    f_movement_roi = forms.FloatField(label="Movement ROI (MR):", initial=2.5, min_value=0, max_value=100, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_movement_roi = forms.DecimalField(label="Movement ROI (MR):", initial=2.5, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     
     f_text_log = forms.CharField(widget= forms.Textarea(attrs={'rows':'5', 'cols':90}), disabled = True, required=False)
 

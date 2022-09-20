@@ -11,6 +11,7 @@ import logging
 import paramiko
 import socket
 import json
+from celery_progress.backend import ProgressRecorder
 
 from .my_ssh import ssh_conf
 from .global_report_24 import rep_from_test_res  # файл с функциями построения отчета
@@ -53,6 +54,10 @@ class BackTestApp():
     client_directory = ssh_conf.client_directory    
 
     list_info = []
+
+    bar_len = 100
+    one_percent = 1
+    cur_progress = 0
 
     my_txt_rep = my_reports()   #создаем объект нашего собственного класса my_reports()
         
@@ -217,6 +222,9 @@ class BackTestApp():
         return strategy_name
 
     def run_report(self, backtest_file_name, mode, user_name):
+
+        self.list_info = []
+        
         self.server_user_directory = user_name
 #        my_txt_rep = my_reports()   #создаем объект нашего собственного класса my_reports()
         
@@ -261,6 +269,9 @@ class BackTestApp():
         return rep_done
 
     def run_backtest(self, user_strategy_settings, user_name):
+
+        self.list_info = []
+        
         self.server_user_directory = user_name
         buf_str = self.get_strategy(user_strategy_settings["f_strategies"])
         file_config = 'usr_' + buf_str + '_config.py'
@@ -287,6 +298,7 @@ class BackTestApp():
 
         # Minimal ROI designed for the strategy.
         not_first = False
+        print(user_strategy_settings)
         buf_str = '    minimal_roi = { "'
         if user_strategy_settings["f_min_roi_value1"] > 0:
             buf_str += str(user_strategy_settings["f_min_roi_time1"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value1"])
@@ -377,13 +389,16 @@ class BackTestApp():
 
         self.list_info.append('Saved in config file: ' + file_config)   
         self.list_info.append('________________________________________')
-
+        print(self.list_info)
 
         client = self.get_ssh_connect()
 
         time_1 = ttime.time()
         time_interval = 0
-                
+
+        test_time_range = 7 #minute
+        self.one_percent = test_time_range*60/100
+                        
         with client.invoke_shell() as ssh:
             ssh.recv(max_bytes)
             self.list_info.append('________________________________________')
@@ -409,18 +424,30 @@ class BackTestApp():
                 ssh.settimeout(1)    #пауза после отправки команды, чтобы дать появиться сопутствующему тексту консоли
                   
                 output = ""
-
-                while (time_interval < 7) and (not("Closing async ccxt session" in part)):
+                
+                while (time_interval < test_time_range) and (not("Closing async ccxt session" in part)):
                     time_2 = ttime.time()
                     time_interval = (time_2 - time_1)/60
-#                    QtWidgets.QApplication.processEvents()
+
+                    self.cur_progress = round(time_interval*60/self.one_percent, 2)
+                    progress_description = 'Back test progress (' + str(self.cur_progress) + '%)'
+                    self.progress_recorder.set_progress(self.cur_progress, 100, description = progress_description)
+                    
                     try:
                         part = ssh.recv(max_bytes).decode("utf-8")
                         self.list_info.append(part)
                         ttime.sleep(0.5)
+#                        if (time_interval >= test_time_range) and (test_time_range < 7) and (not("Closing async ccxt session" in part)):
+#                            test_time_range += 1
+#                            self.one_percent = test_time_range*60/100
                         
                     except socket.timeout:
                         continue
+
+                if "Closing async ccxt session" in part:
+                    self.cur_progress = 100
+                    progress_description = 'Back test progress (' + str(self.cur_progress) + '%)'
+                    self.progress_recorder.set_progress(self.cur_progress, 100, description = progress_description)
 
             self.list_info.append('________________________________________')
 #            self.reset_pb_test()
@@ -444,6 +471,7 @@ class BackTestApp():
                    user_strategy_settings["f_parts"] = list('1')
                    for line in f:
                        line = line.strip()
+                       print(line)
                        if ('arg_N' in line):
                            pars_str = line.split('=')
                            user_strategy_settings["f_series_len"] = pars_str[1].strip()
@@ -458,18 +486,18 @@ class BackTestApp():
 
                        if ('arg_MR' in line):
                            pars_str = line.split('=')
-                           buf_str = str(float(pars_str[1].strip())*100)
+                           buf_str = round((float(pars_str[1].strip())*100), 3)
                            user_strategy_settings["f_movement_roi"] = buf_str
 
                        if ('stoploss' in line):
                            pars_str = line.split('=')
                            if pars_str[0].strip() == 'stoploss' :
-                               buf_str = str(round(abs(float(pars_str[1].strip())*100), 3))
+                               buf_str = (round(abs(float(pars_str[1].strip())*100), 3))
                                user_strategy_settings["f_stop_loss"] = buf_str
 
                        if ('arg_stoploss' in line):
                            pars_str = line.split('=')
-                           buf_str = str(round(float(pars_str[1].strip())*100, 3))
+                           buf_str = (round(float(pars_str[1].strip())*100, 3))
                            user_strategy_settings["f_des_stop_loss"] = buf_str
 
                        if ('my_stoploss' in line):
@@ -478,7 +506,7 @@ class BackTestApp():
                            pars_str = pars_str[1].split(']')
                            pars_str = pars_str[0].split(',')
                            user_strategy_settings["f_my_stop_loss_time"] = pars_str[0].strip()
-                           buf_str = str(round(abs(float(pars_str[1].strip())*100), 3))
+                           buf_str = (round(abs(float(pars_str[1].strip())*100), 3))
                            user_strategy_settings["f_my_stop_loss_value"] = buf_str
 
                        if ('minimal_roi' in line):
@@ -490,7 +518,7 @@ class BackTestApp():
                            for i in range(len(pars_str)):
                                pars_str1 = pars_str[len(pars_str)-1 - i].strip().split(':')
 
-                               roi_val = str(round(abs(float(pars_str1[1].strip())*100), 3))
+                               roi_val = (round(abs(float(pars_str1[1].strip())*100), 3))
                                roi_time = pars_str1[0].strip('""')
 
                                user_strategy_settings["f_min_roi_time1"] = 0
@@ -513,7 +541,7 @@ class BackTestApp():
 
                                if roi_time == '60':
                                    user_strategy_settings["f_min_roi_value4"] = roi_val
-
+                       print(buf_str)
                
                f.close()
            else:
