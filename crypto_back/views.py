@@ -130,26 +130,54 @@ def test_mod_form(request):
 
 @login_required
 def tests_list_page(request):
+	ui_utils = BackTestApp()
+	ui_utils.server_user_directory = str(request.user)
+	strategies_val, reports_val = ui_utils.connect_ssh()     
+	template = 'crypto_templ/cr_tests_list.html'
+	tests_list = reports_val
+#    tests_list = AllBackTests.objects.all()
+	context = {"total_files": tests_list, "user_name":request.user}
+	return render(request, template, context)
+
+@login_required
+def tests_log_page(request):
 #    if request.method == "POST":
 #        userform = TestBackTestForm(request.POST or None)
 #        if userform.is_valid():
 #            bb = userform.save()
 #            return redirect('crypto_back:index')
 #        
-    template = 'crypto_templ/cr_tests_list.html'
+    template = 'crypto_templ/cr_tests_log.html'
     tests_list = AllBackTests.objects.filter(owner=request.user)
 #    tests_list = AllBackTests.objects.all()
-    context = {"tests_list": tests_list, "user_name":request.user}
+#    tests_list.delete()
+#    tests_list = AllBackTests.objects.all()
+    context = {"tests_log": tests_list, "user_name":request.user}
     return render(request, template, context)
 
 # delete record of tests
-def delete_tests(request, id):
+def delete_tests(request, f_name):
+    ui_utils = BackTestApp()
+    name=str(request.user)
+    delete_list = []
+    delete_list.append(f_name)
+        
+    try:
+
+    	ui_utils.delete_results(name, delete_list)
+
+    	return redirect('crypto_back:my_tests_list')
+    except AllBackTests.DoesNotExist:
+        return HttpResponseNotFound("<h2>Record not found</h2>")
+    
+# delete record of tests
+def delete_test_log(request, id):
     try:
         test = AllBackTests.objects.get(id=id)
         test.delete()
-        return redirect('crypto_back:my_tests_list')
+        return redirect('crypto_back:my_tests_log')
     except AllBackTests.DoesNotExist:
-        return HttpResponseNotFound("<h2>Record not found</h2>")
+        return HttpResponseNotFound("<h2>Record not found</h2>")    
 
 @login_required
 def choise_strategy_page(request):
@@ -219,9 +247,11 @@ def run_test_page(request):
     strategies_files = Available_strategies.strategies_file_tuple
 
     template = 'crypto_templ/cr_run_test.html'
-    strategy_keys = ['f_strategies', 'f_reports', 'f_parts', 'f_series_len', 'f_price_inc', 'f_persent_same', 'f_min_roi_time1', 'f_min_roi_value1', 'f_min_roi_time2', 'f_min_roi_value2',
+    strategy_keys = ['f_strategies', 'f_reports', 'f_parts', 'f_series_len', 'f_persent_same', 'f_price_inc', 'f_min_roi_time1', 'f_min_roi_value1', 'f_min_roi_time2', 'f_min_roi_value2',
                          'f_min_roi_time3', 'f_min_roi_value3', 'f_min_roi_time4', 'f_min_roi_value4', 'f_movement_roi', 'f_des_stop_loss', 'f_stop_loss', 'f_my_stop_loss_time', 'f_my_stop_loss_value',
-                         'f_text_log']
+                         'f_text_log', 'f_max_open_trades', 'f_hyperopt', 
+                         'f_buy_cci', 'f_sell_cci', 'f_buy_adx', 'f_buy_adx_enable', 'f_sell_adx', 'f_sell_adx_enable', 'f_buy_fastd', 'f_buy_fastd_enable', 'f_sell_fastd', 'f_sell_fastd_enable', 
+                         'f_buy_fastk', 'f_buy_fastk_enable', 'f_sell_fastk', 'f_sell_fastk_enable', 'f_buy_mfi', 'f_buy_mfi_enable', 'f_sell_mfi', 'f_sell_mfi_enable', 'f_sell_cci_scalp', 'f_sell_cci_scalp_enable']
     p = []
 
     data_bufer = DataBufer.objects.filter(name=request.user)
@@ -234,7 +264,7 @@ def run_test_page(request):
     if request.method == "POST":
         text_buf = "Name of strategy: "
         userform = BackTestForm(request.POST or None)
-       
+        
         if userform.is_valid():
             
             back_test_model = AllBackTests.objects.all()
@@ -248,8 +278,8 @@ def run_test_page(request):
             
             p.append(userform.cleaned_data["f_parts"])
             p.append(userform.cleaned_data["f_series_len"])
-            p.append(userform.cleaned_data["f_price_inc"])
             p.append(userform.cleaned_data["f_persent_same"])
+            p.append(userform.cleaned_data["f_price_inc"])
                         
             p.append(userform.cleaned_data["f_min_roi_time1"])
             p.append(float(userform.cleaned_data["f_min_roi_value1"]))
@@ -267,24 +297,63 @@ def run_test_page(request):
             p.append(float(userform.cleaned_data["f_my_stop_loss_value"]))
             p.append(userform.cleaned_data["f_text_log"])
             
-            p.append(request.user)
+            p.append(userform.cleaned_data["f_max_open_trades"])
+            p.append(userform.cleaned_data["f_hyperopt"])
             
+#            p.append(request.user)
             
-            back_test_record = AllBackTests(strategy_name= p[0], owner= p[20], parts= p[2], minimal_roi1_time= p[6], minimal_roi1_value= p[7], minimal_roi2_time= p[8], minimal_roi2_value= p[9], 
-                                            minimal_roi3_time= p[10], minimal_roi3_value= p[11], minimal_roi4_time= p[12], minimal_roi4_value= p[13], arg_N= p[3], arg_R= p[4], arg_P= p[5], arg_MR= p[14],
-                                            stoploss= p[16], my_stoploss_time= p[17], my_stoploss_value= p[18], arg_stoploss= p[15], text_log= p[19])
+            # for MACD strategy
+            p.append(userform.cleaned_data["f_buy_cci"])
+            p.append(userform.cleaned_data["f_sell_cci"])
+            
+            #for Smooth Scalp strategy
+            p.append(userform.cleaned_data["f_buy_adx"])
+            p.append(userform.cleaned_data["f_buy_adx_enable"])
+            p.append(userform.cleaned_data["f_sell_adx"])
+            p.append(userform.cleaned_data["f_sell_adx_enable"])
+            
+            p.append(userform.cleaned_data["f_buy_fastd"])
+            p.append(userform.cleaned_data["f_buy_fastd_enable"])
+            p.append(userform.cleaned_data["f_sell_fastd"])
+            p.append(userform.cleaned_data["f_sell_fastd_enable"])
+            
+            p.append(userform.cleaned_data["f_buy_fastk"])
+            p.append(userform.cleaned_data["f_buy_fastk_enable"])
+            p.append(userform.cleaned_data["f_sell_fastk"])
+            p.append(userform.cleaned_data["f_sell_fastk_enable"])
+            
+            p.append(userform.cleaned_data["f_buy_mfi"])
+            p.append(userform.cleaned_data["f_buy_mfi_enable"])
+            p.append(userform.cleaned_data["f_sell_mfi"])
+            p.append(userform.cleaned_data["f_sell_mfi_enable"])
+            
+            p.append(userform.cleaned_data["f_sell_cci_scalp"])
+            p.append(userform.cleaned_data["f_sell_cci_scalp_enable"])
+            print(p)
+            back_test_record = AllBackTests(strategy_name= p[0], owner= request.user, parts= p[2], 
+                                            minimal_roi1_time= p[6], minimal_roi1_value= p[7], minimal_roi2_time= p[8], minimal_roi2_value= p[9], minimal_roi3_time= p[10], minimal_roi3_value= p[11], minimal_roi4_time= p[12], minimal_roi4_value= p[13], 
+                                            arg_N= p[3], arg_R= p[4], arg_P= p[5], arg_MR= p[14],
+                                            stoploss= p[16], my_stoploss_time= p[17], my_stoploss_value= p[18], arg_stoploss= p[15], 
+                                            text_log= p[19], max_open_trades= p[20], hyperopt= p[21],
+                                            buy_cci= p[22], sell_cci= p[23], 
+                                            buy_adx= p[24], buy_adx_enable= p[25], sell_adx= p[26], sell_adx_enable= p[27], 
+                                            buy_fastd= p[28], buy_fastd_enable= p[29], sell_fastd= p[30], sell_fastd_enable= p[31], 
+                                            buy_fastk= p[32], buy_fastk_enable= p[33], sell_fastk= p[34], sell_fastk_enable= p[35], 
+                                            buy_mfi= p[36], buy_mfi_enable= p[37], sell_mfi= p[38], sell_mfi_enable= p[39], 
+                                            sell_cci_scalp= p[40], sell_cci_scalp_enable= p[41])
             back_test_record.save()
 
             strategy_settings = dict(list(zip(strategy_keys, p)))
             
             name=str(request.user)
+            print(strategy_settings)
             # Create Task
             back_test_task = ProcessBackTest.delay(strategy_settings, name)
             # Get ID
             task_id = back_test_task.task_id
             # Print Task ID
             print(f'Celery Task ID: {task_id}')
-            print(back_test_task)
+#            print(back_test_task)
             # Return demo view with Task ID
             
 #            ui_utils.run_backtest(strategy_settings, name)
@@ -305,11 +374,12 @@ def run_test_page(request):
     text_buf = str(ui_utils.list_info)
 #    p.append( "min_roi_trailing_loss_4_4.py")
 #    p.append(dict(strategies_files)[user_strategy_choise])
-    for b in range(11):
+    for b in range(40):
         p.append('')
     strategy_settings = dict(list(zip(strategy_keys, p)))
     strategy_settings = ui_utils.param_of_cur_strategy(strategy_settings)
     strategy_settings['f_strategies'] = dict(strategies_list)[user_strategy_choise]
+    print(strategy_settings)
 #    strategy_settings["f_text_log"] = strategy_settings
     parts = BackTestForm(initial= strategy_settings) #{"f_text_log":strategy_settings}) #text_buf})
 
@@ -497,6 +567,7 @@ def m410(request):
  
 def m500(request):
     return HttpResponseServerError("<h2>Something is wrong</h2>")
+
 
 
 

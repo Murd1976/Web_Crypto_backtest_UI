@@ -88,7 +88,7 @@ class BackTestForm(forms.Form):
     f_parts = forms.ChoiceField(label="Choise pairs part:", initial=1, choices=((1, "Part 1"), (2, "Part 2"), (3, "Part 3"), (4, "Part 4")), widget=forms.RadioSelect, required=False)
     
     f_series_len = forms.IntegerField(label="Series length (N):", initial=4, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
-    f_price_inc = forms.IntegerField(label="Price incriase in N candles (P):", initial=4, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_price_inc = forms.DecimalField(label="Price incriase in N candles (P):", initial=4.0,  min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     f_persent_same = forms.IntegerField(label="Persen of same candles (R):", initial=80, min_value=0, max_value=100, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     
     f_min_roi_time1 = forms.IntegerField(initial=0, min_value=0, max_value=60, widget=forms.NumberInput( attrs={'size':'3'}), disabled = True, required=False)
@@ -108,6 +108,37 @@ class BackTestForm(forms.Form):
     f_my_stop_loss_value = forms.DecimalField(initial=0.1, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     
     f_movement_roi = forms.DecimalField(label="Movement ROI (MR):", initial=2.5, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    
+    f_max_open_trades = forms.IntegerField(label="Max open trades:", initial=3, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_hyperopt = forms.BooleanField(label="Hyper Opt", required=False)
+
+    # for MACD strategy
+    f_buy_cci = forms.IntegerField(label="Buy side: CCI between -700 and 0: ", initial= -50, min_value=-700, max_value=0, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_sell_cci = forms.IntegerField(label="Sell side: CCI between 0 and 700: ", initial=100, min_value=0, max_value=700, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    
+    #for Smooth Scalp strategy
+    f_buy_adx = forms.IntegerField(label="Buy side: ADX between 20 and 50: ", initial= 32, min_value=20, max_value=50, widget=forms.NumberInput( attrs={'size':'2'}), required=False)
+    f_buy_adx_enable = forms.BooleanField(label="ADX enable: ", initial=True, required=False)
+    f_sell_adx = forms.IntegerField(label="Sell side: ADX between 50 and 100: ", initial=53, min_value=50, max_value=100, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_sell_adx_enable = forms.BooleanField(label="ADX enable: ", initial=False, required=False)
+    
+    f_buy_fastd = forms.IntegerField(label="Buy side: FastD between 15 and 45: ", initial= 30, min_value=15, max_value=45, widget=forms.NumberInput( attrs={'size':'2'}), required=False)
+    f_buy_fastd_enable = forms.BooleanField(label="FastD enable: ", initial=True, required=False)
+    f_sell_fastd = forms.IntegerField(label="Sell side: FastD between 50 and 100: ", initial=79, min_value=50, max_value=100, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_sell_fastd_enable = forms.BooleanField(label="FastD enable: ", initial=True, required=False)
+    
+    f_buy_fastk = forms.IntegerField(label="Buy side: FastK between 15 and 45: ", initial= 26, min_value=15, max_value=45, widget=forms.NumberInput( attrs={'size':'2'}), required=False)
+    f_buy_fastk_enable = forms.BooleanField(label="FastK enable: ", initial=False, required=False)
+    f_sell_fastk = forms.IntegerField(label="Sell side: FastK between 50 and 100: ", initial=70, min_value=50, max_value=100, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_sell_fastk_enable = forms.BooleanField(label="FastK enable: ", initial=True, required=False)
+    
+    f_buy_mfi = forms.IntegerField(label="Buy side: MFI between 10 and 25: ", initial= 22, min_value=10, max_value=25, widget=forms.NumberInput( attrs={'size':'2'}), required=False)
+    f_buy_mfi_enable = forms.BooleanField(label="MFI enable: ", initial=True, required=False)
+    f_sell_mfi = forms.IntegerField(label="Sell side: MFI between 50 and 100: ", initial=92, min_value=75, max_value=100, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_sell_mfi_enable = forms.BooleanField(label="MFI enable: ", initial=False, required=False)
+    
+    f_sell_cci_scalp = forms.IntegerField(label="Sell side: CCI between 100 and 200: ", initial=183, min_value=100, max_value=200, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_sell_cci_scalp_enable = forms.BooleanField(label="CCI enable: ", initial=True, required=False)
     
     f_text_log = forms.CharField(widget= forms.Textarea(attrs={'rows':'5', 'cols':90}), disabled = True, required=False)
 

@@ -1,0 +1,4 @@
+[2022-10-19 19:21:02,466: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+

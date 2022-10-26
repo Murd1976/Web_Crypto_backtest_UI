@@ -20,7 +20,9 @@ urlpatterns = [
     path('reports/xlsx/delete/<str:f_name>/', views.delete_xlsx_report, name='my_delete_xlsx_reports'),
     re_path(r'^download/$', views.download_report),
     path('tests/', views.tests_list_page, name= 'my_tests_list'),
-    path('tests/delete/<int:id>/', views.delete_tests, name= 'my_delete_tests'),
+    path('tests/delete/<str:f_name>/', views.delete_tests, name= 'my_delete_tests'),
+    path('tests/log/', views.tests_log_page, name= 'my_tests_log'),
+    path('tests/log/delete/<int:id>/', views.delete_test_log, name= 'my_delete_log'),
     path('accounts/profile/', views.user_profile, name= 'my_profile'),
     path('accounts/login/', BBLoginView.as_view(), name= 'my_login'),
     path('accounts/logout/', BBLogoutView.as_view(), name= 'my_logout'),
@@ -41,5 +43,6 @@ urlpatterns = [
     path('users/<int:id>/<str:name>/', views.users),
      
 ]
+
 
 

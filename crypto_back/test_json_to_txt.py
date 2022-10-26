@@ -8,6 +8,7 @@ class my_reports():
         #загрузка данных о сделках из файла с результатами BackTest
         if mode == 'local':
             buf_str = f_name.split('.')
+            
         #Открываем текстовый файл для сохранения форматированного отчета
             f = open(directory + buf_str[0] + '.txt', 'w')                
 

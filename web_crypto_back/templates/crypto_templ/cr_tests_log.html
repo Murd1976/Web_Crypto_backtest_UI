@@ -1,0 +1,52 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% load bootstrap4 %}
+
+{% block title %} Choise result file {% endblock %}
+
+{% block content %}
+<h2> Log of tests for {{user_name}}</h2>
+<div class="conteiner-fluid mb-2 border">
+
+<table border="1" colspan="2" width="100%">
+   <tr>
+     <th>Strategy name </th>
+	 <th>Owner</th>
+	 <th>Data</th>
+     <th>Parts</th> 
+	 <th>MaxOpenTrades</th>
+	 <th>arg_N</th>
+     <th>min_ROI_0</th>
+     <th>min_ROI_24</th>
+     <th>min_ROI_30</th>
+     <th>min_ROI_60</th>
+     <th> MR </th>
+     <th>StopLoss</th>
+     <th>My StopLoss</th>
+     <th>( S )</th>
+	 <th>HyperOpt</th>
+	 <th>Delete</th>
+   </tr>
+ {% for record in tests_log %}
+   <tr>
+     <td>{{record.strategy_name}}</td>
+	 <td>{{record.owner}}</td>
+	 <td>{{record.created_at}}</td>
+	 <td align="center">{{record.parts}}</td>
+	 <td align="center">{{record.max_open_trades}}</td>
+	 <td align="center">{{record.arg_N}}</td>
+     <td align="center">{{record.minimal_roi1_value}}</td>
+     <td align="center">{{record.minimal_roi2_value}}</td>
+     <td align="center">{{record.minimal_roi3_value}}</td>
+     <td align="center">{{record.minimal_roi4_value}}</td>
+     <td align="center">{{record.arg_MR}}</td>
+     <td align="center">{{record.stoploss}}</td>
+     <td align="center">{{record.my_stoploss_value}}</td>
+     <td align="center">{{record.arg_stoploss}}</td>
+	 <td align="center">{{record.hyperopt}}</td>
+	 <td align="center"><a href="delete/{{record.id}}" style="text-decoration:None">Delete record</a></td>
+   </tr>
+ {% endfor %}  
+</table>
+
+</div>
+{% endblock %}

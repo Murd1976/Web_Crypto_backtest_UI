@@ -1,0 +1,211 @@
+[2022-10-19 19:23:43,630: WARNING/ForkPoolWorker-7] Task started
+[2022-10-19 19:23:43,631: WARNING/ForkPoolWorker-7] Start
+[2022-10-19 19:23:43,631: WARNING/ForkPoolWorker-7] 0
+[2022-10-19 19:23:43,739: INFO/ForkPoolWorker-7] Connected (version 2.0, client JSSHProxy)
+[2022-10-19 19:23:45,543: INFO/ForkPoolWorker-7] Authentication (publickey) successful!
+[2022-10-19 19:23:45,611: INFO/ForkPoolWorker-7] [chan 0] Opened sftp connection (server version 3)
+[2022-10-19 19:23:46,382: INFO/ForkPoolWorker-7] Connected (version 2.0, client JSSHProxy)
+[2022-10-19 19:23:47,278: INFO/ForkPoolWorker-7] Authentication (publickey) successful!
+[2022-10-19 19:23:47,349: INFO/ForkPoolWorker-7] [chan 0] Opened sftp connection (server version 3)
+[2022-10-19 19:23:49,923: INFO/ForkPoolWorker-7] [chan 0] sftp session closed.
+[2022-10-19 19:23:50,009: INFO/ForkPoolWorker-7] [chan 1] Opened sftp connection (server version 3)
+[2022-10-19 19:23:50,101: INFO/ForkPoolWorker-7] [chan 1] sftp session closed.
+[2022-10-19 19:23:50,188: INFO/ForkPoolWorker-7] [chan 2] Opened sftp connection (server version 3)
+[2022-10-19 19:23:50,257: INFO/ForkPoolWorker-7] [chan 2] sftp session closed.
+[2022-10-19 19:23:50,509: INFO/ForkPoolWorker-7] [chan 3] Opened sftp connection (server version 3)
+[2022-10-19 19:23:55,284: INFO/ForkPoolWorker-7] [chan 3] sftp session closed.
+[2022-10-19 19:23:55,371: INFO/ForkPoolWorker-7] [chan 4] Opened sftp connection (server version 3)
+[2022-10-19 19:23:55,483: INFO/ForkPoolWorker-7] [chan 4] sftp session closed.
+[2022-10-19 19:23:55,569: INFO/ForkPoolWorker-7] [chan 5] Opened sftp connection (server version 3)
+[2022-10-19 19:23:55,637: INFO/ForkPoolWorker-7] [chan 5] sftp session closed.
+[2022-10-19 19:23:56,003: INFO/ForkPoolWorker-7] [chan 6] Opened sftp connection (server version 3)
+[2022-10-19 19:24:00,899: INFO/ForkPoolWorker-7] [chan 6] sftp session closed.
+[2022-10-19 19:24:00,987: INFO/ForkPoolWorker-7] [chan 7] Opened sftp connection (server version 3)
+[2022-10-19 19:24:01,100: INFO/ForkPoolWorker-7] [chan 7] sftp session closed.
+[2022-10-19 19:24:01,186: INFO/ForkPoolWorker-7] [chan 8] Opened sftp connection (server version 3)
+[2022-10-19 19:24:01,255: INFO/ForkPoolWorker-7] [chan 8] sftp session closed.
+[2022-10-19 19:24:02,527: INFO/ForkPoolWorker-7] [chan 9] Opened sftp connection (server version 3)
+[2022-10-19 19:24:07,378: INFO/ForkPoolWorker-7] [chan 9] sftp session closed.
+[2022-10-19 19:24:07,464: INFO/ForkPoolWorker-7] [chan 10] Opened sftp connection (server version 3)
+[2022-10-19 19:24:07,577: INFO/ForkPoolWorker-7] [chan 10] sftp session closed.
+[2022-10-19 19:24:07,663: INFO/ForkPoolWorker-7] [chan 11] Opened sftp connection (server version 3)
+[2022-10-19 19:24:07,731: INFO/ForkPoolWorker-7] [chan 11] sftp session closed.
+[2022-10-19 19:24:08,107: INFO/ForkPoolWorker-7] [chan 12] Opened sftp connection (server version 3)
+[2022-10-19 19:24:11,551: INFO/ForkPoolWorker-7] [chan 12] sftp session closed.
+[2022-10-19 19:24:11,637: INFO/ForkPoolWorker-7] [chan 13] Opened sftp connection (server version 3)
+[2022-10-19 19:24:11,729: INFO/ForkPoolWorker-7] [chan 13] sftp session closed.
+[2022-10-19 19:24:11,815: INFO/ForkPoolWorker-7] [chan 14] Opened sftp connection (server version 3)
+[2022-10-19 19:24:11,883: INFO/ForkPoolWorker-7] [chan 14] sftp session closed.
+[2022-10-19 19:24:12,248: INFO/ForkPoolWorker-7] [chan 15] Opened sftp connection (server version 3)
+[2022-10-19 19:24:14,526: INFO/ForkPoolWorker-7] [chan 15] sftp session closed.
+[2022-10-19 19:24:14,613: INFO/ForkPoolWorker-7] [chan 16] Opened sftp connection (server version 3)
+[2022-10-19 19:24:14,708: INFO/ForkPoolWorker-7] [chan 16] sftp session closed.
+[2022-10-19 19:24:14,795: INFO/ForkPoolWorker-7] [chan 17] Opened sftp connection (server version 3)
+[2022-10-19 19:24:14,864: INFO/ForkPoolWorker-7] [chan 17] sftp session closed.
+[2022-10-19 19:24:16,244: INFO/ForkPoolWorker-7] [chan 18] Opened sftp connection (server version 3)
+[2022-10-19 19:24:22,954: INFO/ForkPoolWorker-7] [chan 18] sftp session closed.
+[2022-10-19 19:24:23,040: INFO/ForkPoolWorker-7] [chan 19] Opened sftp connection (server version 3)
+[2022-10-19 19:24:23,153: INFO/ForkPoolWorker-7] [chan 19] sftp session closed.
+[2022-10-19 19:24:23,240: INFO/ForkPoolWorker-7] [chan 20] Opened sftp connection (server version 3)
+[2022-10-19 19:24:23,309: INFO/ForkPoolWorker-7] [chan 20] sftp session closed.
+[2022-10-19 19:24:23,522: INFO/ForkPoolWorker-7] [chan 21] Opened sftp connection (server version 3)
+[2022-10-19 19:24:28,121: INFO/ForkPoolWorker-7] [chan 21] sftp session closed.
+[2022-10-19 19:24:28,207: INFO/ForkPoolWorker-7] [chan 22] Opened sftp connection (server version 3)
+[2022-10-19 19:24:28,319: INFO/ForkPoolWorker-7] [chan 22] sftp session closed.
+[2022-10-19 19:24:28,405: INFO/ForkPoolWorker-7] [chan 23] Opened sftp connection (server version 3)
+[2022-10-19 19:24:28,474: INFO/ForkPoolWorker-7] [chan 23] sftp session closed.
+[2022-10-19 19:24:28,973: INFO/ForkPoolWorker-7] [chan 24] Opened sftp connection (server version 3)
+[2022-10-19 19:24:33,295: INFO/ForkPoolWorker-7] [chan 24] sftp session closed.
+[2022-10-19 19:24:33,383: INFO/ForkPoolWorker-7] [chan 25] Opened sftp connection (server version 3)
+[2022-10-19 19:24:33,497: INFO/ForkPoolWorker-7] [chan 25] sftp session closed.
+[2022-10-19 19:24:33,584: INFO/ForkPoolWorker-7] [chan 26] Opened sftp connection (server version 3)
+[2022-10-19 19:24:33,654: INFO/ForkPoolWorker-7] [chan 26] sftp session closed.
+[2022-10-19 19:24:34,880: INFO/ForkPoolWorker-7] [chan 27] Opened sftp connection (server version 3)
+[2022-10-19 19:24:39,209: INFO/ForkPoolWorker-7] [chan 27] sftp session closed.
+[2022-10-19 19:24:39,296: INFO/ForkPoolWorker-7] [chan 28] Opened sftp connection (server version 3)
+[2022-10-19 19:24:39,409: INFO/ForkPoolWorker-7] [chan 28] sftp session closed.
+[2022-10-19 19:24:39,496: INFO/ForkPoolWorker-7] [chan 29] Opened sftp connection (server version 3)
+[2022-10-19 19:24:39,565: INFO/ForkPoolWorker-7] [chan 29] sftp session closed.
+[2022-10-19 19:24:39,779: INFO/ForkPoolWorker-7] [chan 30] Opened sftp connection (server version 3)
+[2022-10-19 19:24:44,374: INFO/ForkPoolWorker-7] [chan 30] sftp session closed.
+[2022-10-19 19:24:44,683: INFO/ForkPoolWorker-7] [chan 31] Opened sftp connection (server version 3)
+[2022-10-19 19:24:44,975: INFO/ForkPoolWorker-7] [chan 31] sftp session closed.
+[2022-10-19 19:24:45,164: INFO/ForkPoolWorker-7] [chan 32] Opened sftp connection (server version 3)
+[2022-10-19 19:24:45,350: INFO/ForkPoolWorker-7] [chan 32] sftp session closed.
+[2022-10-19 19:24:46,960: INFO/ForkPoolWorker-7] [chan 33] Opened sftp connection (server version 3)
+[2022-10-19 19:24:52,980: INFO/ForkPoolWorker-7] [chan 33] sftp session closed.
+[2022-10-19 19:24:53,178: INFO/ForkPoolWorker-7] [chan 34] Opened sftp connection (server version 3)
+[2022-10-19 19:24:53,507: INFO/ForkPoolWorker-7] [chan 34] sftp session closed.
+[2022-10-19 19:24:53,594: INFO/ForkPoolWorker-7] [chan 35] Opened sftp connection (server version 3)
+[2022-10-19 19:24:53,769: INFO/ForkPoolWorker-7] [chan 35] sftp session closed.
+[2022-10-19 19:24:54,612: INFO/ForkPoolWorker-7] [chan 36] Opened sftp connection (server version 3)
+[2022-10-19 19:24:59,529: INFO/ForkPoolWorker-7] [chan 36] sftp session closed.
+[2022-10-19 19:24:59,616: INFO/ForkPoolWorker-7] [chan 37] Opened sftp connection (server version 3)
+[2022-10-19 19:24:59,750: INFO/ForkPoolWorker-7] [chan 37] sftp session closed.
+[2022-10-19 19:24:59,837: INFO/ForkPoolWorker-7] [chan 38] Opened sftp connection (server version 3)
+[2022-10-19 19:24:59,906: INFO/ForkPoolWorker-7] [chan 38] sftp session closed.
+[2022-10-19 19:25:01,108: INFO/ForkPoolWorker-7] [chan 39] Opened sftp connection (server version 3)
+[2022-10-19 19:25:05,699: INFO/ForkPoolWorker-7] [chan 39] sftp session closed.
+[2022-10-19 19:25:05,785: INFO/ForkPoolWorker-7] [chan 40] Opened sftp connection (server version 3)
+[2022-10-19 19:25:05,919: INFO/ForkPoolWorker-7] [chan 40] sftp session closed.
+[2022-10-19 19:25:06,006: INFO/ForkPoolWorker-7] [chan 41] Opened sftp connection (server version 3)
+[2022-10-19 19:25:06,074: INFO/ForkPoolWorker-7] [chan 41] sftp session closed.
+[2022-10-19 19:25:06,596: INFO/ForkPoolWorker-7] [chan 42] Opened sftp connection (server version 3)
+[2022-10-19 19:25:11,456: INFO/ForkPoolWorker-7] [chan 42] sftp session closed.
+[2022-10-19 19:25:11,543: INFO/ForkPoolWorker-7] [chan 43] Opened sftp connection (server version 3)
+[2022-10-19 19:25:11,658: INFO/ForkPoolWorker-7] [chan 43] sftp session closed.
+[2022-10-19 19:25:11,744: INFO/ForkPoolWorker-7] [chan 44] Opened sftp connection (server version 3)
+[2022-10-19 19:25:11,813: INFO/ForkPoolWorker-7] [chan 44] sftp session closed.
+[2022-10-19 19:25:12,194: INFO/ForkPoolWorker-7] [chan 45] Opened sftp connection (server version 3)
+[2022-10-19 19:25:17,680: INFO/ForkPoolWorker-7] [chan 45] sftp session closed.
+[2022-10-19 19:25:17,766: INFO/ForkPoolWorker-7] [chan 46] Opened sftp connection (server version 3)
+[2022-10-19 19:25:17,907: INFO/ForkPoolWorker-7] [chan 46] sftp session closed.
+[2022-10-19 19:25:17,995: INFO/ForkPoolWorker-7] [chan 47] Opened sftp connection (server version 3)
+[2022-10-19 19:25:18,063: INFO/ForkPoolWorker-7] [chan 47] sftp session closed.
+[2022-10-19 19:25:18,281: INFO/ForkPoolWorker-7] [chan 48] Opened sftp connection (server version 3)
+[2022-10-19 19:25:23,319: INFO/ForkPoolWorker-7] [chan 48] sftp session closed.
+[2022-10-19 19:25:23,406: INFO/ForkPoolWorker-7] [chan 49] Opened sftp connection (server version 3)
+[2022-10-19 19:25:23,540: INFO/ForkPoolWorker-7] [chan 49] sftp session closed.
+[2022-10-19 19:25:23,626: INFO/ForkPoolWorker-7] [chan 50] Opened sftp connection (server version 3)
+[2022-10-19 19:25:23,695: INFO/ForkPoolWorker-7] [chan 50] sftp session closed.
+[2022-10-19 19:25:23,914: INFO/ForkPoolWorker-7] [chan 51] Opened sftp connection (server version 3)
+[2022-10-19 19:25:30,652: INFO/ForkPoolWorker-7] [chan 51] sftp session closed.
+[2022-10-19 19:25:30,739: INFO/ForkPoolWorker-7] [chan 52] Opened sftp connection (server version 3)
+[2022-10-19 19:25:30,872: INFO/ForkPoolWorker-7] [chan 52] sftp session closed.
+[2022-10-19 19:25:30,958: INFO/ForkPoolWorker-7] [chan 53] Opened sftp connection (server version 3)
+[2022-10-19 19:25:31,026: INFO/ForkPoolWorker-7] [chan 53] sftp session closed.
+[2022-10-19 19:25:31,543: INFO/ForkPoolWorker-7] [chan 54] Opened sftp connection (server version 3)
+[2022-10-19 19:25:36,617: INFO/ForkPoolWorker-7] [chan 54] sftp session closed.
+[2022-10-19 19:25:36,816: INFO/ForkPoolWorker-7] [chan 55] Opened sftp connection (server version 3)
+[2022-10-19 19:25:37,049: INFO/ForkPoolWorker-7] [chan 55] sftp session closed.
+[2022-10-19 19:25:37,135: INFO/ForkPoolWorker-7] [chan 56] Opened sftp connection (server version 3)
+[2022-10-19 19:25:37,204: INFO/ForkPoolWorker-7] [chan 56] sftp session closed.
+[2022-10-19 19:25:37,421: INFO/ForkPoolWorker-7] [chan 57] Opened sftp connection (server version 3)
+[2022-10-19 19:25:41,356: INFO/ForkPoolWorker-7] [chan 57] sftp session closed.
+[2022-10-19 19:25:41,443: INFO/ForkPoolWorker-7] [chan 58] Opened sftp connection (server version 3)
+[2022-10-19 19:25:41,555: INFO/ForkPoolWorker-7] [chan 58] sftp session closed.
+[2022-10-19 19:25:41,641: INFO/ForkPoolWorker-7] [chan 59] Opened sftp connection (server version 3)
+[2022-10-19 19:25:41,710: INFO/ForkPoolWorker-7] [chan 59] sftp session closed.
+[2022-10-19 19:25:41,935: INFO/ForkPoolWorker-7] [chan 60] Opened sftp connection (server version 3)
+[2022-10-19 19:25:46,821: INFO/ForkPoolWorker-7] [chan 60] sftp session closed.
+[2022-10-19 19:25:46,907: INFO/ForkPoolWorker-7] [chan 61] Opened sftp connection (server version 3)
+[2022-10-19 19:25:47,040: INFO/ForkPoolWorker-7] [chan 61] sftp session closed.
+[2022-10-19 19:25:47,125: INFO/ForkPoolWorker-7] [chan 62] Opened sftp connection (server version 3)
+[2022-10-19 19:25:47,194: INFO/ForkPoolWorker-7] [chan 62] sftp session closed.
+[2022-10-19 19:25:48,788: INFO/ForkPoolWorker-7] [chan 63] Opened sftp connection (server version 3)
+[2022-10-19 19:25:53,492: INFO/ForkPoolWorker-7] [chan 63] sftp session closed.
+[2022-10-19 19:25:53,579: INFO/ForkPoolWorker-7] [chan 64] Opened sftp connection (server version 3)
+[2022-10-19 19:25:53,693: INFO/ForkPoolWorker-7] [chan 64] sftp session closed.
+[2022-10-19 19:25:53,780: INFO/ForkPoolWorker-7] [chan 65] Opened sftp connection (server version 3)
+[2022-10-19 19:25:53,849: INFO/ForkPoolWorker-7] [chan 65] sftp session closed.
+[2022-10-19 19:25:54,065: INFO/ForkPoolWorker-7] [chan 66] Opened sftp connection (server version 3)
+[2022-10-19 19:25:58,917: INFO/ForkPoolWorker-7] [chan 66] sftp session closed.
+[2022-10-19 19:25:59,004: INFO/ForkPoolWorker-7] [chan 67] Opened sftp connection (server version 3)
+[2022-10-19 19:25:59,119: INFO/ForkPoolWorker-7] [chan 67] sftp session closed.
+[2022-10-19 19:25:59,206: INFO/ForkPoolWorker-7] [chan 68] Opened sftp connection (server version 3)
+[2022-10-19 19:25:59,275: INFO/ForkPoolWorker-7] [chan 68] sftp session closed.
+[2022-10-19 19:25:59,635: INFO/ForkPoolWorker-7] [chan 69] Opened sftp connection (server version 3)
+[2022-10-19 19:26:06,237: INFO/ForkPoolWorker-7] [chan 69] sftp session closed.
+[2022-10-19 19:26:06,323: INFO/ForkPoolWorker-7] [chan 70] Opened sftp connection (server version 3)
+[2022-10-19 19:26:06,435: INFO/ForkPoolWorker-7] [chan 70] sftp session closed.
+[2022-10-19 19:26:06,521: INFO/ForkPoolWorker-7] [chan 71] Opened sftp connection (server version 3)
+[2022-10-19 19:26:06,591: INFO/ForkPoolWorker-7] [chan 71] sftp session closed.
+[2022-10-19 19:26:06,802: INFO/ForkPoolWorker-7] [chan 72] Opened sftp connection (server version 3)
+[2022-10-19 19:26:11,174: INFO/ForkPoolWorker-7] [chan 72] sftp session closed.
+[2022-10-19 19:26:11,363: INFO/ForkPoolWorker-7] [chan 73] Opened sftp connection (server version 3)
+[2022-10-19 19:26:11,738: INFO/ForkPoolWorker-7] [chan 73] sftp session closed.
+[2022-10-19 19:26:11,824: INFO/ForkPoolWorker-7] [chan 74] Opened sftp connection (server version 3)
+[2022-10-19 19:26:12,003: INFO/ForkPoolWorker-7] [chan 74] sftp session closed.
+[2022-10-19 19:26:12,531: INFO/ForkPoolWorker-7] [chan 75] Opened sftp connection (server version 3)
+[2022-10-19 19:26:17,384: INFO/ForkPoolWorker-7] [chan 75] sftp session closed.
+[2022-10-19 19:26:17,763: INFO/ForkPoolWorker-7] [chan 76] Opened sftp connection (server version 3)
+[2022-10-19 19:26:17,947: INFO/ForkPoolWorker-7] [chan 76] sftp session closed.
+[2022-10-19 19:26:18,145: INFO/ForkPoolWorker-7] [chan 77] Opened sftp connection (server version 3)
+[2022-10-19 19:26:18,317: INFO/ForkPoolWorker-7] [chan 77] sftp session closed.
+[2022-10-19 19:26:18,574: INFO/ForkPoolWorker-7] [chan 78] Opened sftp connection (server version 3)
+[2022-10-19 19:26:22,718: INFO/ForkPoolWorker-7] [chan 78] sftp session closed.
+[2022-10-19 19:26:22,805: INFO/ForkPoolWorker-7] [chan 79] Opened sftp connection (server version 3)
+[2022-10-19 19:26:22,938: INFO/ForkPoolWorker-7] [chan 79] sftp session closed.
+[2022-10-19 19:26:23,024: INFO/ForkPoolWorker-7] [chan 80] Opened sftp connection (server version 3)
+[2022-10-19 19:26:23,093: INFO/ForkPoolWorker-7] [chan 80] sftp session closed.
+[2022-10-19 19:26:23,308: INFO/ForkPoolWorker-7] [chan 81] Opened sftp connection (server version 3)
+[2022-10-19 19:26:28,064: INFO/ForkPoolWorker-7] [chan 81] sftp session closed.
+[2022-10-19 19:26:28,151: INFO/ForkPoolWorker-7] [chan 82] Opened sftp connection (server version 3)
+[2022-10-19 19:26:28,265: INFO/ForkPoolWorker-7] [chan 82] sftp session closed.
+[2022-10-19 19:26:28,357: INFO/ForkPoolWorker-7] [chan 83] Opened sftp connection (server version 3)
+[2022-10-19 19:26:28,425: INFO/ForkPoolWorker-7] [chan 83] sftp session closed.
+[2022-10-19 19:26:28,932: INFO/ForkPoolWorker-7] [chan 84] Opened sftp connection (server version 3)
+[2022-10-19 19:26:33,680: INFO/ForkPoolWorker-7] [chan 84] sftp session closed.
+[2022-10-19 19:26:33,766: INFO/ForkPoolWorker-7] [chan 85] Opened sftp connection (server version 3)
+[2022-10-19 19:26:33,899: INFO/ForkPoolWorker-7] [chan 85] sftp session closed.
+[2022-10-19 19:26:33,985: INFO/ForkPoolWorker-7] [chan 86] Opened sftp connection (server version 3)
+[2022-10-19 19:26:34,055: INFO/ForkPoolWorker-7] [chan 86] sftp session closed.
+[2022-10-19 19:26:34,871: INFO/ForkPoolWorker-7] [chan 87] Opened sftp connection (server version 3)
+[2022-10-19 19:26:42,347: INFO/ForkPoolWorker-7] [chan 87] sftp session closed.
+[2022-10-19 19:26:42,434: INFO/ForkPoolWorker-7] [chan 88] Opened sftp connection (server version 3)
+[2022-10-19 19:26:42,568: INFO/ForkPoolWorker-7] [chan 88] sftp session closed.
+[2022-10-19 19:26:42,654: INFO/ForkPoolWorker-7] [chan 89] Opened sftp connection (server version 3)
+[2022-10-19 19:26:42,723: INFO/ForkPoolWorker-7] [chan 89] sftp session closed.
+[2022-10-19 19:26:43,077: INFO/ForkPoolWorker-7] [chan 90] Opened sftp connection (server version 3)
+[2022-10-19 19:26:47,859: INFO/ForkPoolWorker-7] [chan 90] sftp session closed.
+[2022-10-19 19:26:47,945: INFO/ForkPoolWorker-7] [chan 91] Opened sftp connection (server version 3)
+[2022-10-19 19:26:48,059: INFO/ForkPoolWorker-7] [chan 91] sftp session closed.
+[2022-10-19 19:26:48,145: INFO/ForkPoolWorker-7] [chan 92] Opened sftp connection (server version 3)
+[2022-10-19 19:26:48,214: INFO/ForkPoolWorker-7] [chan 92] sftp session closed.
+[2022-10-19 19:26:48,434: INFO/ForkPoolWorker-7] [chan 93] Opened sftp connection (server version 3)
+[2022-10-19 19:26:52,064: INFO/ForkPoolWorker-7] [chan 93] sftp session closed.
+[2022-10-19 19:26:52,150: INFO/ForkPoolWorker-7] [chan 94] Opened sftp connection (server version 3)
+[2022-10-19 19:26:52,263: INFO/ForkPoolWorker-7] [chan 94] sftp session closed.
+[2022-10-19 19:26:52,349: INFO/ForkPoolWorker-7] [chan 95] Opened sftp connection (server version 3)
+[2022-10-19 19:26:52,532: INFO/ForkPoolWorker-7] [chan 95] sftp session closed.
+[2022-10-19 19:26:52,886: INFO/ForkPoolWorker-7] [chan 96] Opened sftp connection (server version 3)
+[2022-10-19 19:26:57,595: INFO/ForkPoolWorker-7] [chan 96] sftp session closed.
+[2022-10-19 19:26:57,682: INFO/ForkPoolWorker-7] [chan 97] Opened sftp connection (server version 3)
+[2022-10-19 19:26:57,796: INFO/ForkPoolWorker-7] [chan 97] sftp session closed.
+[2022-10-19 19:26:57,882: INFO/ForkPoolWorker-7] [chan 98] Opened sftp connection (server version 3)
+[2022-10-19 19:26:57,951: INFO/ForkPoolWorker-7] [chan 98] sftp session closed.
+[2022-10-19 19:26:59,474: INFO/ForkPoolWorker-7] Connected (version 2.0, client JSSHProxy)
+[2022-10-19 19:27:04,473: INFO/ForkPoolWorker-7] Authentication (publickey) successful!
+[2022-10-19 19:27:05,560: INFO/ForkPoolWorker-7] [chan 0] sftp session closed.
+[2022-10-19 19:27:05,561: WARNING/ForkPoolWorker-7] 100.0
+[2022-10-19 19:27:05,561: WARNING/ForkPoolWorker-7] End

@@ -210,6 +210,8 @@ class rep_from_test_res():
 
         #берем длину последовательности из имени файла теста
         N_strategy = int(f_name.split('_')[1])
+        if N_strategy == 0:
+            return 'unknown series len (N)'
         
 	#загрузка данных о сделках из файла с результатами BackTest
 #        with open(work_path+f_name, 'r') as f:
@@ -360,8 +362,12 @@ class rep_from_test_res():
 
         			self.cur_progress = round((self.bar_step+z*len(self.N_candle_analyze)+len(self.N_pre_candle_analyze)*len(buf_df)+cc+1)/self.one_percent, 2)
         			# Build description
-        			progress_description = 'Calculating (' + str(self.cur_progress) + '%)'
+#        			progress_description = 'Calculating (' + str(self.cur_progress) + '%)'
+        			progress_description = 'Creating report... ( ' + str(self.cur_progress) + ' %)'
+                    
         			self.progress_recorder.set_progress(self.cur_progress, 100, description = progress_description)
+#        			print(self.cur_progress)
+#        			print(progress_description)
 #        			sg.one_line_progress_meter('Creatin report in progress...', bar_step+z*len(self.N_candle_analyze)+len(self.N_pre_candle_analyze)*len(buf_df)+cc+1, bar_len, 'Count...', orientation='h')
 
 	# PRE BUY ANALYSIS
@@ -572,3 +578,6 @@ class rep_from_test_res():
             sftp_client.close()
 
         #print(f_name+'_t1.xlsx is wrote!')
+        return 'Ok'
+
+

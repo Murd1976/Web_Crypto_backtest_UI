@@ -3,6 +3,31 @@
 
 {% block content %}
 <h2> The N Red Candles Buy strategy </h2>
+<p>
+At any time, analyze last N candles<br>
+- IF candles from 1 to N-X have at least R% of candles with change < 0<br>
+  -  and IF 100-(100*([N close price]/[candle 1 open price])) > P<br>
+     - THEN trigger BUY 
+</p><br>
+<p>
+NOTE:<br>
+- N, X, R, P are arbitrary values entered by user<br>
+- change is the difference between the candle close price and open price 
+</p><br>
+<p>
+EXAMPLE: <br>
+N=5	we instruct the bot to anaylize the last 5 candles<br>
+X=0	<br>
+R=100<br>
+P=0
+</p><br>
+<p>
+it is<br>
+- IF 100% of the candles from 1 to 5 [N-X, or 5-0] have change < 0		[meaning: if 5 consecutive candles are RED candles] <br>
+   - and IF 100-(100*([candle 5 close price] / [candle 1 open price])) > 0	[meaning: from candle 1 to 4, the price has increased more than 0%]<br>
+      - THEN trigger BUY THEN buy
+</p><br>
+
 <p><h4>Basic settings for this strategy</h4></p><br>
 <p> BUY SIGNAL : N RED Candles</p>
 <p>

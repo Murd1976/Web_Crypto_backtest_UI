@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://app.controller.cloudlets.zone/
+HostUrl=https://app.controller.cloudlets.zone/1.0/environment/file/rest/download?hash=7e33961407a7609e324a150382e51276&session=2dcxaf4b024216c551b5becc3eb528557ba6

@@ -1,0 +1,26 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% block title %} Reinforced Smooth Scalp {% endblock %}
+
+{% block content %}
+<h2> The Reinforced Smooth Scalp strategy with Candle TRAILING Stop-Loss </h2>
+<br>
+<p>This strategy is based around the idea of generating <br>
+a lot of potentatils buys and make tiny profits on each trade<br>
+we recommend to have at least 60 parallel trades at any time <br>
+to cover non avoidable losses<br>
+</p><br>
+
+<p>Optimal stoploss designed for the strategy 10%<br>
+This attribute will be overridden if the config file contains "stoploss"<br>
+should not be below 3% loss </p><br>
+
+<p>SELL SIGNAL: Candle TRAILING Stop-Loss + Minimum ROI - with these values: <br>
+S = 0 % (means disabled signal)<br>
+MR = 0 % (means disabled signal)<br>
+ROI = 2.0%<br>
+User Stop loss = (0 till 32 minutes = -10 %, after 32 minutes = 0 % (means disabled signal)) </p><br>
+
+
+<p> All rights reserved &laquo; Christian &raquo; </p>
+{% endblock %}
+

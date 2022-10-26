@@ -9,24 +9,17 @@
 
 <table border="1" colspan="2" width="100%">
    <tr>
-     <th>Strategy name </th>
-	 <th>Owner</th>
-	 <th>Data</th>
-     <th>Parts</th> 
-	 <th>arg_N</th>
+     <th>{{user_name}} BackTest result file name </th>
 	 <th>Delete</th>
    </tr>
- {% for record in tests_list %}
+ {% for file in total_files %}
    <tr>
-     <td>{{record.strategy_name}}</td>
-	 <td>{{record.owner}}</td>
-	 <td>{{record.created_at}}</td>
-	 <td align="center">{{record.parts}}</td>
-	 <td align="center">{{record.arg_N}}</td>
-	 <td align="center"><a href="delete/{{record.id}}" style="text-decoration:None">Delete record</a></td>
+     <td>{{file}}</td>
+	 <td align="center"><a href="delete/{{file}}" style="text-decoration:None">Delete record</a></td>
    </tr>
  {% endfor %}  
 </table>
 
 </div>
 {% endblock %}
+

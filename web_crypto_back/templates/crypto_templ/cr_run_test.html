@@ -24,7 +24,9 @@
 <div class="conteiner-fluid">
 <form name="BackTestQuery" method="POST" novalidate="novalidate">
   {% csrf_token %}
+<!-- Row number one --> 
   <div class="row border">
+	<!-- Column number one -->
 	<div class="col-6 border">
       	<div class="row ml-4">
           {{ form.f_strategies.label_tag }}
@@ -45,15 +47,43 @@
 		    </div>
 	    	<div class="col">&nbsp</div>
        </div> 
-	</div>  
-    <div class="col-2-auto">&nbsp</div>
+	</div> 
+	<!-- Column number two -->
+    <div class="col-1-auto">&nbsp</div>
  	<div class="col ">
 	   {{ form.f_parts.label_tag }}
   	   {{ form.f_parts }}
 	</div>
+	<!-- Column number three -->
+	<div class="col border">
+		<div class="row">&nbsp </div>
+		<div class="row">
+			<div class="col-6 ">
+				{{ form.f_buy_cci.label_tag }}
+			</div>
+			<div class="col-auto">
+				{{ form.f_buy_cci }}
+			</div>
+			
+		</div>
+		<div class="row">
+			<div class="col-6 ">
+				{{ form.f_sell_cci.label_tag }}
+			</div>
+			<div class="col-auto">
+				
+                {{ form.f_sell_cci }}
+			</div>
+			
+		</div>
+		<div class="row">&nbsp </div>
+	</div>
+	
   </div>	
 
+<!-- Row number two --> 
   <div class="row border">
+	<!-- Column number one -->
     <div class="col-6 border">
       	<div class="row">&nbsp</div>
 		<div class="row">
@@ -90,7 +120,7 @@
 			</div>
 		</div>
 	</div>
-  
+	<!-- Column number two -->
 	<div class="col-3-auto ">
       	<div class="row">
           	<div class="col-1">&nbsp</div>
@@ -158,6 +188,112 @@
 				<label>%</label>
 			</div>
 		</div>
+				
+	</div>
+	
+	<!-- Column number three -->
+	<div class="col border">
+		
+		<div class="row">
+			<div class="col-3 ">
+				<label>Method: </label>
+			</div>
+			<div class="col-2">
+				<label>Buy: </label>
+			</div>
+			<div class="col-2">
+				<label>Enable: </label>
+			</div>
+			<div class="col-2">
+				<label>Sell: </label>
+			</div>
+			<div class="col-2">
+				<label>Enable: </label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-3 ">
+				<label>ADX: </label>
+			</div>
+			<div class="col-2">
+				{{ form.f_buy_adx }}
+			</div>
+			<div class="col-2">
+				{{ form.f_buy_adx_enable }}
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_adx }}
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_adx_enable }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-3 ">
+				<label>FastD: </label>
+			</div>
+			<div class="col-2">
+				{{ form.f_buy_fastd }}
+			</div>
+			<div class="col-2">
+				{{ form.f_buy_fastd_enable }}
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_fastd }}
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_fastd_enable }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-3 ">
+				<label>FastK: </label>
+			</div>
+			<div class="col-2">
+				{{ form.f_buy_fastk }}
+			</div>
+			<div class="col-2">
+				{{ form.f_buy_fastk_enable }}
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_fastk }}
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_fastk_enable }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-3 ">
+				<label>MFI: </label>
+			</div>
+			<div class="col-2">
+				{{ form.f_buy_mfi }}
+			</div>
+			<div class="col-2">
+				{{ form.f_buy_mfi_enable }}
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_mfi }}
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_mfi_enable }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-3 ">
+				<label>CCI: </label>
+			</div>
+			<div class="col-2">
+			</div>
+			<div class="col-2">
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_cci_scalp }}
+			</div>
+			<div class="col-2">
+				{{ form.f_sell_cci_scalp_enable }}
+			</div>
+		</div>
 	</div>
 <!--    
 	<div class="col ">
@@ -170,8 +306,10 @@
 	</div>
 -->    
   </div>
-  
+
+<!-- Row number three -->   
   <div class="row border">
+	<!-- Column number one -->
 	<div class="col-6 border">
       	<div class="row">&nbsp</div>
 		<div class="row">
@@ -215,18 +353,46 @@
 		</div>
       	<div class="row">&nbsp </div>
 	</div>
+	
+	<!-- Column number two -->
 	<div class="col ">
 		<div class="row">&nbsp </div>
 		<div class="row">
-			<div class="col-auto">
+			<div class="col-3">
 				{{ form.f_movement_roi.label_tag }}
+			</div>
+			<div class="col-1">
                 {{ form.f_movement_roi }}
 			</div>
 			<div class="col">
 				<label>%</label>
 			</div>
 		</div>
+		<div class="row">&nbsp </div>
+		<div class="row">
+			<div class="col-3">
+				{{ form.f_max_open_trades.label_tag }}
+			</div>
+			<div class="col-1">
+                {{ form.f_max_open_trades }}
+			</div>
+			<div class="col">
+				<label>num</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-3">
+				{{ form.f_hyperopt.label_tag }}
+			</div>
+			<div class="col-1">
+                {{ form.f_hyperopt }}
+			</div>
+			<div class="col">
+				<label></label>
+			</div>
+		</div>
 	</div>
+
   </div>
 <!--  
   <div class="row border">

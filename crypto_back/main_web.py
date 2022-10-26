@@ -55,6 +55,7 @@ class BackTestApp():
 
     list_info = []
 
+    num_try = 3
     bar_len = 100
     one_percent = 1
     cur_progress = 0
@@ -62,6 +63,50 @@ class BackTestApp():
     my_txt_rep = my_reports()   #создаем объект нашего собственного класса my_reports()
         
     my_rep = rep_from_test_res() #создаем объект нашего собственного класса rep_from_test_res()
+
+    def delete_results(self, user_name, delete_list):
+
+        for i in range(self.num_try):
+            client = self.get_ssh_connect()    #создаем ssh-подключение
+            if client != 'error':
+                sftp_client = client.open_sftp()
+                
+                break
+            else:
+                self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (connect_ssh)")
+                self.list_info.append('________________________________________')
+                return
+            
+        results_path = '/' + self.server_directory + self.server_backtests_directory +user_name + '/'
+        try:
+#          print(results_path)
+          list_dir = sftp_client.listdir(path=results_path)
+          
+          for del_item in delete_list:
+              del_item = str(del_item)
+              
+              splited_str = del_item.split('.')
+              
+              del_name = splited_str[0]
+              
+              for file_name in list_dir:
+                 file_name = file_name.strip('\n')
+                 splited_str = file_name.split('.')
+                 if len(splited_str) == 2:
+                     if splited_str[0] == del_name:
+                         try:
+                            sftp_client.remove(results_path+file_name)
+                            self.list_info.append("Deleted file: " + file_name)
+                         except:
+                             self.list_info.append("Can't delete file: " + file_name)
+        except:
+           self.list_info.append("Can't complite deleting!")
+        finally:   
+           self.list_info.append('________________________________________') 
+            
+        sftp_client.close()
+        client.close()
+        return 'Ok'
     
     def get_ssh_connect(self, show_info = True):
 
@@ -148,6 +193,7 @@ class BackTestApp():
             sftp_client = client.open_sftp()
             current_dir = sftp_client.getcwd()
         else:
+
             return list_strategies, list_backtest
         
         #Проверяем наличие, на сервере, полльзователького каталога, если такго не существует - создаем
@@ -198,10 +244,18 @@ class BackTestApp():
             
     def get_strategy(self, f_name: str):
 
-        client = self.get_ssh_connect(show_info = False) #создаем ssh-подключение
-        sftp_client = client.open_sftp()
-        remote_file = sftp_client.open (self.server_directory + self.server_strategy_directory + f_name) # Путь к файлу
+        for i in range(self.num_try):
+            client = self.get_ssh_connect(show_info = False) #создаем ssh-подключение
+            if client != 'error':
+                sftp_client = client.open_sftp()
+                break
+            else:
+                self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (get_strategy)")
+                self.list_info.append('________________________________________')
+                return
+
         try:
+            remote_file = sftp_client.open (self.server_directory + self.server_strategy_directory + f_name) # Путь к файлу
             strategy_name = 'none'
             for line in remote_file:
                 line = line.strip()
@@ -218,7 +272,7 @@ class BackTestApp():
             remote_file.close()
 
         client.close()
-        
+        print('strategy_name: ', strategy_name)
         return strategy_name
 
     def run_report(self, backtest_file_name, mode, user_name):
@@ -235,15 +289,33 @@ class BackTestApp():
                 os.mkdir("reports/" + user_name + "/txt")
                 os.mkdir("reports/" + user_name + "/xlsx")
                 self.list_info.append("Created directory: /reports/" + user_name)
-
-        client = self.get_ssh_connect() #создаем ssh-подключение
+                
+            f_path = './reports/' + user_name + '/xlsx/'
+            if not os.path.exists(f_path):
+                os.mkdir(f_path)
+                self.list_info.append("Created directory: " + f_path)
+                
+            f_path = './reports/' + user_name + '/txt/'
+            if not os.path.exists(f_path):
+                os.mkdir(f_path)
+                self.list_info.append("Created directory: " + f_path)
+                
+        for i in range(self.num_try):
+            client = self.get_ssh_connect() #создаем ssh-подключение
+            if client != 'error':
+                break
+            else:
+                self.list_info.append("SSH connect to server fail after " + self.num_try + " tries... (run_report)")
+                self.list_info.append('________________________________________')
+                return
+        print('Rep-start!')    
         if client != 'error':
             sftp = client.open_sftp()
             remote_file = sftp.open ('/' + self.server_directory + self.server_backtests_directory +self.server_user_directory + '/' + backtest_file_name, mode = 'r') # Путь к файлу
             json_obj = json.loads(remote_file.read())
             
             self.list_info.append("Creating report, please wait... ")
-
+            print('Rep-start!')
             buf_str = backtest_file_name.split('.')
             if mode == 'local':
               res_report = self.my_txt_rep.json_to_txt(json_obj, remote_file, mode, self.local_reports_directory + user_name + '/txt/', backtest_file_name)
@@ -253,15 +325,20 @@ class BackTestApp():
             self.list_info.append("Created report: ")
             self.list_info.append(buf_str[0] + '.txt')
 
+            print('Rep-1 Ok!')
             res_report = self.my_rep.get_report(json_obj, mode, user_name, self.server_directory + self.server_backtests_directory+self.server_user_directory + self.server_reports_directory, backtest_file_name)
-            if res_report == "no_trades":
-                self.list_info.append("Created report error: No trades in test results!")
+            if res_report == 'unknown series len (N)':
+                self.list_info.append("Unknown series len (N). Probably an imported strategy.")
             else:
-                self.list_info.append("Created report: ")
-                self.list_info.append(backtest_file_name.split('.')[0]+'_t1.xlsx')
+                if res_report == "no_trades":
+                    self.list_info.append("Created report error: No trades in test results!")
+                else:
+                    self.list_info.append("Created report: ")
+                    self.list_info.append(backtest_file_name.split('.')[0]+'_t1.xlsx')
             self.list_info.append('________________________________________')
             rep_done =True
             sftp.close()
+            print(self.list_info)
         else:
             return
         
@@ -283,12 +360,16 @@ class BackTestApp():
             datadir = " --datadir user_data/data/binance "
             export = " --export trades "
             config = " --config user_data/config_p" + user_strategy_settings["f_parts"] + ".json "
-            export_filename = " --export-filename user_data/backtest_results/" + self.server_user_directory + "/bc_" + str(user_strategy_settings["f_series_len"]) +'_p' + user_strategy_settings["f_parts"]+ '_' + buf_str + '.json'
+            max_open_trades = ' --max-open-trades ' + str(user_strategy_settings["f_max_open_trades"])
+            if user_strategy_settings["f_series_len"] > 0:
+                export_filename = " --export-filename user_data/backtest_results/" + self.server_user_directory + "/bc_" + str(user_strategy_settings["f_series_len"]) +'_p' + user_strategy_settings["f_parts"]+ '_' + buf_str + '.json'
+            else:
+                export_filename = " --export-filename user_data/backtest_results/" + self.server_user_directory + "/bc_0" +'_p' + user_strategy_settings["f_parts"]+ '_' + buf_str + '.json'
 
             strategy = " -s "+ buf_str
             
-            run_str = "docker-compose run --rm freqtrade backtesting " + datadir+export+ config+ export_filename+strategy
-            
+            run_str = "docker-compose run --rm freqtrade backtesting " + datadir+export+ config+ max_open_trades+ export_filename+strategy
+            print(run_str)
             self.list_info.append('Command line for run test:')
             self.list_info.append(run_str)
             self.list_info.append('________________________________________')
@@ -299,56 +380,152 @@ class BackTestApp():
         # Minimal ROI designed for the strategy.
         not_first = False
         print(user_strategy_settings)
-        buf_str = '    minimal_roi = { "'
-        if user_strategy_settings["f_min_roi_value1"] > 0:
-            buf_str += str(user_strategy_settings["f_min_roi_time1"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value1"])
-            not_first = True
-        if user_strategy_settings["f_min_roi_value2"] > 0:
-            if not_first:
-                buf_str += ', "'
-            buf_str += str(user_strategy_settings["f_min_roi_time2"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value2"])
-            not_first = True
-        if user_strategy_settings["f_min_roi_value3"] > 0:
-            if not_first:
-                buf_str += ', "'
-            buf_str += str(user_strategy_settings["f_min_roi_time3"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value3"])
-            not_first = True
-        if user_strategy_settings["f_min_roi_value4"] > 0:
-            if not_first:
-                buf_str += ', "'
-            buf_str += str(user_strategy_settings["f_min_roi_time4"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value4"])
-
-        buf_str += '}'
+        buf_str = '    minimal_roi = { '
         strategy_settings = pd.Series([buf_str])
-
-        buf_str = '    arg_N =  ' + str(user_strategy_settings["f_series_len"])
-        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
-
-        #arg_X=0
         
-        buf_str = '    arg_R =  ' + str(user_strategy_settings["f_persent_same"])
+        if user_strategy_settings["f_min_roi_value1"] > 0:
+            buf_str = '        "' + str(user_strategy_settings["f_min_roi_time1"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value1"])
+            buf_str += ','
+            strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        if user_strategy_settings["f_min_roi_value2"] > 0:
+            buf_str = '        "' + str(user_strategy_settings["f_min_roi_time2"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value2"])
+            buf_str += ','
+            strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        if user_strategy_settings["f_min_roi_value3"] > 0:
+            buf_str = '        "' + str(user_strategy_settings["f_min_roi_time3"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value3"])
+            buf_str += ','
+            strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        if user_strategy_settings["f_min_roi_value4"] > 0:
+            buf_str = '        "' + str(user_strategy_settings["f_min_roi_time4"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value4"])
+            strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+
+        buf_str = '    }'
+        
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
 
+        if user_strategy_settings["f_series_len"] > 0:
+            buf_str = '    arg_N =  ' + str(user_strategy_settings["f_series_len"])
+        else:
+            buf_str = '    arg_N = ' + "'none'"
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+
+        #arg_R=0
+        if user_strategy_settings["f_persent_same"] > 0:
+            buf_str = '    arg_R =  ' + str(user_strategy_settings["f_persent_same"])
+        else:
+            buf_str = '    arg_R = ' + "'none'"
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
         #- arg_P % price increase in arg_N candles
-        buf_str = '    arg_P =  ' + str(user_strategy_settings["f_price_inc"])
+        if user_strategy_settings["f_price_inc"] != 0:
+            buf_str = '    arg_P =  ' + str(user_strategy_settings["f_price_inc"])
+        else:
+            buf_str = '    arg_P = ' + "'none'"    
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)       
            
         #- arg_MR % movement ROI
-        buf_str = '    arg_MR =  ' + self.normalyze_percents(user_strategy_settings["f_movement_roi"])
+        if user_strategy_settings["f_movement_roi"] > 0:
+            buf_str = '    arg_MR =  ' + self.normalyze_percents(user_strategy_settings["f_movement_roi"])
+        else:
+            buf_str = '    arg_MR = ' + "'none'"
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
 
         # Optimal stoploss designed for the strategy.
-        buf_str = '    stoploss = -' + self.normalyze_percents(user_strategy_settings["f_stop_loss"])
+        if user_strategy_settings["f_stop_loss"] != 0:
+            buf_str = '    stoploss = -' + self.normalyze_percents(user_strategy_settings["f_stop_loss"])
+        else:
+            buf_str = '    stoploss = ' + "'none'"
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
 
         # Optimal time-depended stoploss designed for the strategy.
-        buf_str = '    my_stoploss = np.array([' + str(user_strategy_settings["f_my_stop_loss_time"]) + ', -'+ self.normalyze_percents(user_strategy_settings["f_my_stop_loss_value"]) + '])'
+        if user_strategy_settings["f_my_stop_loss_time"] != 0:
+            buf_str = '    my_stoploss = np.array([' + str(user_strategy_settings["f_my_stop_loss_time"]) + ', -'+ self.normalyze_percents(user_strategy_settings["f_my_stop_loss_value"]) + '])'
+        else:
+            buf_str = '    my_stoploss = ' + "'none'"    
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True) 
 
         #(S = desired Stop-Loss Value)
-        buf_str = '    arg_stoploss =  ' + self.normalyze_percents(user_strategy_settings["f_des_stop_loss"])
+        if user_strategy_settings["f_des_stop_loss"] != 0:
+            buf_str = '    arg_stoploss =  ' + self.normalyze_percents(user_strategy_settings["f_des_stop_loss"])
+        else:
+            buf_str = '    arg_stoploss = ' + "'none'"
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
 
+        # for MACD strategy
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '# for MACD strategy'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '    buy_cci =  ' + str(user_strategy_settings["f_buy_cci"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '    sell_cci =  ' + str(user_strategy_settings["f_sell_cci"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        #for Smooth Scalp strategy
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '# for Smooth Scalp strategy'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '    buy_adx =  ' + str(user_strategy_settings["f_buy_adx"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    buy_adx_enable =  ' + str(user_strategy_settings["f_buy_adx_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_adx =  ' + str(user_strategy_settings["f_sell_adx"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_adx_enable =  ' + str(user_strategy_settings["f_sell_adx_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    buy_fastd =  ' + str(user_strategy_settings["f_buy_fastd"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    buy_fastd_enable =  ' + str(user_strategy_settings["f_buy_fastd_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_fastd =  ' + str(user_strategy_settings["f_sell_fastd"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_fastd_enable =  ' + str(user_strategy_settings["f_sell_fastd_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    buy_fastk =  ' + str(user_strategy_settings["f_buy_fastk"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    buy_fastk_enable =  ' + str(user_strategy_settings["f_buy_fastk_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_fastk =  ' + str(user_strategy_settings["f_sell_fastk"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_fastk_enable =  ' + str(user_strategy_settings["f_sell_fastk_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    buy_mfi =  ' + str(user_strategy_settings["f_buy_mfi"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    buy_mfi_enable =  ' + str(user_strategy_settings["f_buy_mfi_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_mfi =  ' + str(user_strategy_settings["f_sell_mfi"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_mfi_enable =  ' + str(user_strategy_settings["f_sell_mfi_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_cci_scalp =  ' + str(user_strategy_settings["f_sell_cci_scalp"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sell_cci_scalp_enable =  ' + str(user_strategy_settings["f_sell_cci_scalp_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        #Hyper opt
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '# for Hyper opt'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    hyperopt =  ' + str(user_strategy_settings["f_hyperopt"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
         
 #        with open(file_config, 'w') as out_file:
 #            out_file.write('#  '+datetime.now().strftime('%Y-%m-%d / %H:%M:%S')+'\n \n')
@@ -361,7 +538,15 @@ class BackTestApp():
 
 #        out_file.close()
 
-        client = self.get_ssh_connect() #создаем ssh-подключение
+        
+        for i in range(self.num_try):
+            client = self.get_ssh_connect() #создаем ssh-подключение
+            if client != 'error':
+                break
+            else:
+                self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (run_report)")
+                self.list_info.append('________________________________________')
+                return
         if client != 'error':
             sftp_client = client.open_sftp()
             remote_file = sftp_client.open ('/' + self.server_directory + self.server_strategy_directory + file_config, mode = 'w') # Путь к файлу
@@ -391,7 +576,14 @@ class BackTestApp():
         self.list_info.append('________________________________________')
         print(self.list_info)
 
-        client = self.get_ssh_connect()
+        for i in range(self.num_try):
+            client = self.get_ssh_connect() #создаем ssh-подключение
+            if client != 'error':
+                break
+            else:
+                self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (run_report)")
+                self.list_info.append('________________________________________')
+                return
 
         time_1 = ttime.time()
         time_interval = 0
@@ -430,12 +622,14 @@ class BackTestApp():
                     time_interval = (time_2 - time_1)/60
 
                     self.cur_progress = round(time_interval*60/self.one_percent, 2)
-                    progress_description = 'Back test progress (' + str(self.cur_progress) + '%)'
+#                    progress_description = 'Back test progress (' + str(self.cur_progress) + '%)'
+                    progress_description = 'Back test in progress... ( ' + str(self.cur_progress) + ' %)'
                     self.progress_recorder.set_progress(self.cur_progress, 100, description = progress_description)
                     
                     try:
                         part = ssh.recv(max_bytes).decode("utf-8")
                         self.list_info.append(part)
+                        print(self.list_info)
                         ttime.sleep(0.5)
 #                        if (time_interval >= test_time_range) and (test_time_range < 7) and (not("Closing async ccxt session" in part)):
 #                            test_time_range += 1
@@ -455,7 +649,7 @@ class BackTestApp():
             client.close()
 
     def normalyze_percents(self, num: str):
-       buf = float(num)/100
+       buf = round(float(num)/100, 4)
        str_num = str(buf)
        return str_num
 
@@ -465,83 +659,267 @@ class BackTestApp():
            buf_str = buf_str + '_config.py'
 #           user_strategy_settings["f_reports"] = os.getcwd()
            f_path = './crypto_back/templates/conf_strategies/' + buf_str
+           roi_flag = False
+           roi_counter = 0
             
+           user_strategy_settings["f_max_open_trades"] = 3
            if os.path.exists(f_path):
                with open(f_path, 'r') as f:
                    user_strategy_settings["f_parts"] = list('1')
                    for line in f:
                        line = line.strip()
-                       print(line)
+#                       print(line)
                        if ('arg_N' in line):
                            pars_str = line.split('=')
-                           user_strategy_settings["f_series_len"] = pars_str[1].strip()
+                           buf = pars_str[1].strip()
+                           
+                           if buf == "'none'":
+                               user_strategy_settings["f_series_len"] = '0'
+                           else: 
+                               user_strategy_settings["f_series_len"] = pars_str[1].strip()
                            
                        if ('arg_R' in line):
                            pars_str = line.split('=')
-                           user_strategy_settings["f_persent_same"] = pars_str[1].strip()
+                           buf = pars_str[1].strip()
+                           if buf == "'none'":
+                               user_strategy_settings["f_persent_same"] = '0'
+                           else: 
+                               user_strategy_settings["f_persent_same"] = pars_str[1].strip()
 
                        if ('arg_P' in line):
                            pars_str = line.split('=')
-                           user_strategy_settings["f_price_inc"] = pars_str[1].strip()
+                           buf = pars_str[1].strip()
+                           if buf == "'none'":
+                               user_strategy_settings["f_price_inc"] = '0'
+                           else: 
+                               user_strategy_settings["f_price_inc"] = pars_str[1].strip()
 
                        if ('arg_MR' in line):
                            pars_str = line.split('=')
-                           buf_str = round((float(pars_str[1].strip())*100), 3)
-                           user_strategy_settings["f_movement_roi"] = buf_str
+                           buf = pars_str[1].strip()
+                           if buf == "'none'":
+                               user_strategy_settings["f_movement_roi"] = '0'
+                           else: 
+                               buf = round((float(pars_str[1].strip())*100), 3)
+                               user_strategy_settings["f_movement_roi"] = buf
 
                        if ('stoploss' in line):
                            pars_str = line.split('=')
                            if pars_str[0].strip() == 'stoploss' :
-                               buf_str = (round(abs(float(pars_str[1].strip())*100), 3))
-                               user_strategy_settings["f_stop_loss"] = buf_str
+                               buf = pars_str[1].strip()
+                               if buf == "'none'":
+                                   user_strategy_settings["f_stop_loss"] = '0'
+                               else: 
+                                   buf = (round(abs(float(pars_str[1].strip())*100), 3))
+                                   user_strategy_settings["f_stop_loss"] = buf
 
                        if ('arg_stoploss' in line):
                            pars_str = line.split('=')
-                           buf_str = (round(float(pars_str[1].strip())*100, 3))
-                           user_strategy_settings["f_des_stop_loss"] = buf_str
+                           buf = pars_str[1].strip()
+                           if buf == "'none'":
+                               user_strategy_settings["f_des_stop_loss"] = '0'
+                           else: 
+                               buf = (round(float(pars_str[1].strip())*100, 3))
+                               user_strategy_settings["f_des_stop_loss"] = buf
 
                        if ('my_stoploss' in line):
                            pars_str = line.split('=')
-                           pars_str = pars_str[1].split('[')
-                           pars_str = pars_str[1].split(']')
-                           pars_str = pars_str[0].split(',')
-                           user_strategy_settings["f_my_stop_loss_time"] = pars_str[0].strip()
-                           buf_str = (round(abs(float(pars_str[1].strip())*100), 3))
-                           user_strategy_settings["f_my_stop_loss_value"] = buf_str
+                           buf = pars_str[1].strip()
+                           if buf == "'none'":
+                               user_strategy_settings["f_my_stop_loss_time"] = '0'
+                               user_strategy_settings["f_my_stop_loss_value"] = '0'
+                           else: 
+                               pars_str = pars_str[1].split('[')
+                               pars_str = pars_str[1].split(']')
+                               pars_str = pars_str[0].split(',')
+                               user_strategy_settings["f_my_stop_loss_time"] = pars_str[0].strip()
+                               buf = (round(abs(float(pars_str[1].strip())*100), 3))
+                               user_strategy_settings["f_my_stop_loss_value"] = buf
 
                        if ('minimal_roi' in line):
                            roi = []
-                           pars_str = line.split('=')
-                           buf_str = pars_str[1].strip().strip('{}')
-                           pars_str = buf_str.strip().split(',')
+                           roi_flag = True
+                           roi_counter = 0
+#                           pars_str = line.split('=')
+#                           buf_str = pars_str[1].strip().strip('{}')
+#                           pars_str = buf_str.strip().split(',')
+
+                           user_strategy_settings["f_min_roi_time1"] = 0
+                           user_strategy_settings["f_min_roi_value1"] = 0
+                           user_strategy_settings["f_min_roi_time2"] = 24
+                           user_strategy_settings["f_min_roi_value2"] = 0
+                           user_strategy_settings["f_min_roi_time3"] = 30
+                           user_strategy_settings["f_min_roi_value3"] = 0
+                           user_strategy_settings["f_min_roi_time4"] = 60
+                           user_strategy_settings["f_min_roi_value4"] = 0
                            
-                           for i in range(len(pars_str)):
-                               pars_str1 = pars_str[len(pars_str)-1 - i].strip().split(':')
+                       if (roi_flag == True):
+                            if ('}' in line):
+                                roi_flag = False
+                                continue
+                            
+                            if (':' in line):
+                               roi_counter +=1
+                               pars_str = line.strip().split(',')
+                                                   
+                               buf_str = pars_str[0].strip().strip('{}').strip(',')
+                               pars_str = buf_str.split(':')
+                               
+                               roi_val = str(round(abs(float(pars_str[1].strip())*100), 3))
+                               roi_time = pars_str[0].strip('""')
 
-                               roi_val = (round(abs(float(pars_str1[1].strip())*100), 3))
-                               roi_time = pars_str1[0].strip('""')
+                               
 
-                               user_strategy_settings["f_min_roi_time1"] = 0
-                               user_strategy_settings["f_min_roi_value1"] = 0
-                               user_strategy_settings["f_min_roi_time2"] = 24
-                               user_strategy_settings["f_min_roi_value2"] = 0
-                               user_strategy_settings["f_min_roi_time3"] = 30
-                               user_strategy_settings["f_min_roi_value3"] = 0
-                               user_strategy_settings["f_min_roi_time4"] = 60
-                               user_strategy_settings["f_min_roi_value4"] = 0
-
-                               if roi_time == '0':
+                               if roi_counter == 1:
+                                   user_strategy_settings["f_min_roi_time1"] = roi_time
                                    user_strategy_settings["f_min_roi_value1"] = roi_val
 
-                               if roi_time == '24':
+                               if roi_counter == 2:
+                                   user_strategy_settings["f_min_roi_time2"] = roi_time
                                    user_strategy_settings["f_min_roi_value2"] = roi_val
 
-                               if roi_time == '30':
+                               if roi_counter == 3:
+                                   user_strategy_settings["f_min_roi_time3"] = roi_time
                                    user_strategy_settings["f_min_roi_value3"] = roi_val
 
-                               if roi_time == '60':
+                               if roi_counter == 4:
+                                   user_strategy_settings["f_min_roi_time4"] = roi_time
                                    user_strategy_settings["f_min_roi_value4"] = roi_val
-                       print(buf_str)
+                                   
+                       # for MACD strategy
+                       if ('buy_cci_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_buy_cci"] = buf
+                       if ('sell_cci_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_sell_cci"] = buf
+                           
+                        #for Smooth Scalp strategy
+                       if ('buy_adx_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_buy_adx"] = buf
+                       if ('buy_adx_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_buy_adx_enable"] = buf
+                       if ('sell_adx_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_sell_adx"] = buf
+                       if ('sell_adx_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_sell_adx_enable"] = buf
+                           
+                       if ('buy_fastd_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_buy_fastd"] = buf
+                       if ('buy_fastd_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_buy_fastd_enable"] = buf
+                       if ('sell_fastd_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_sell_fastd"] = buf
+                       if ('sell_fastd_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_sell_fastd_enable"] = buf
+                           
+                       if ('buy_fastk_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_buy_fastk"] = buf
+                       if ('buy_fastk_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_buy_fastk_enable"] = buf
+                       if ('sell_fastk_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_sell_fastk"] = buf
+                       if ('sell_fastk_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_sell_fastk_enable"] = buf
+                           
+                       if ('buy_mfi_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_buy_mfi"] = buf
+                       if ('buy_mfi_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_buy_mfi_enable"] = buf
+                       if ('sell_mfi_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_sell_mfi"] = buf
+                       if ('sell_mfi_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_sell_mfi_enable"] = buf
+                           
+                       if ('sell_cci_scalp_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_sell_cci_scalp"] = buf
+                       if ('sell_cci_scalp_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_sell_cci_scalp_enable"] = buf
+
+                       #Hyper opt
+                       if ('hyperopt' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_hyperopt"] = buf
+#                       print(buf_str)
                
                f.close()
            else:
@@ -562,4 +940,8 @@ def main():
 
 if __name__ == '__main__':  # Если мы запускаем файл напрямую, а не импортируем
     main()  # то запускаем функцию main()    
+
+
+
+
 

@@ -1,0 +1,45 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% block title %} 4x4 Dump Buy Signal Dev {% endblock %}
+
+{% block content %}
+<h2> The 4x4 Dump Buy Signal Dev strategy with Candle TRAILING Stop-Loss </h2>
+<p><h4>It is a -REVERSE 4x4 Pump </h4></p>
+<p>At any time, analyze last N candles<br>
+- IF candles from 1 to N-X have at least R% of candles with change < 0 <br>
+   -  and IF 100-(100*([N close price]/[candle 1 open price])) < P <br>
+  - THEN trigger BUY </p><br>
+
+<p>NOTE: <br>
+- N, X, R, P are arbitrary values entered by user<br>
+  - change is the difference between the candle close price and open price </p><br>
+
+<p>
+EXAMPLE <br>
+N=4	we instruct the bot to analYize the last 4 candles<br>
+X=0	<br>
+R=100<br>
+P=-4<br>
+</p>  
+<p>
+it is<br>
+- IF 100% of the candles from 1 to 4 [N-X, or 4-0] have change < 0		[meaning: if 4 consecutive candles are RED candles]<br>
+   - and IF 100-(100*([candle 4 close price]/[candle 1 open price])) < -4	[meaning: from candle 1 open price to 4 close price, the price has decreased more than 4%]<br>
+      - THEN trigger BUY THEN buy</p><br>
+
+<p><h4>Basic settings for this strategy</h4></p><br>
+<p> BUY SIGNAL : 4x4 PUMP</p>
+<p>
+N=4	we instruct the bot to anaylize the last 5 candles<br>
+X=0	<br>
+R=100      at least 100% of 4 candles are green <br>
+P=4</p>
+
+<p>SELL SIGNAL: Candle TRAILING Stop-Loss + Minimum ROI - with these values: <br>
+S = 0.5%<br>
+MR = 2.5%<br>
+ROI = 4.5%<br>
+User Stop loss = (0 till 32 minutes = -3%, after 32 minutes = -1%) </p><br>
+
+<p> All rights reserved &laquo; Christian &raquo; </p>
+{% endblock %}
+
