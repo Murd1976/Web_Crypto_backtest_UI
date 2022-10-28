@@ -18,8 +18,8 @@ class config_strategy():
 #
     hyperopt = False
 #
-    buy_cci_val = -50
-    sell_cci_val = 100
+    buy_cci_val = -48
+    sell_cci_val = 687
 #    
     buy_adx_val = 32
     buy_fastd_val = 30

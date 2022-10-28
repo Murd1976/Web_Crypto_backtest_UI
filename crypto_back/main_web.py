@@ -92,7 +92,9 @@ class BackTestApp():
               for file_name in list_dir:
                  file_name = file_name.strip('\n')
                  splited_str = file_name.split('.')
-                 if len(splited_str) == 2:
+                
+                 if len(splited_str) >= 1:
+                     
                      if splited_str[0] == del_name:
                          try:
                             sftp_client.remove(results_path+file_name)
@@ -406,49 +408,49 @@ class BackTestApp():
         if user_strategy_settings["f_series_len"] > 0:
             buf_str = '    arg_N =  ' + str(user_strategy_settings["f_series_len"])
         else:
-            buf_str = '    arg_N = ' + "'none'"
+            buf_str = '    arg_N = ' + '0'
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
 
         #arg_R=0
         if user_strategy_settings["f_persent_same"] > 0:
             buf_str = '    arg_R =  ' + str(user_strategy_settings["f_persent_same"])
         else:
-            buf_str = '    arg_R = ' + "'none'"
+            buf_str = '    arg_R = ' + '0'
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
         
         #- arg_P % price increase in arg_N candles
         if user_strategy_settings["f_price_inc"] != 0:
             buf_str = '    arg_P =  ' + str(user_strategy_settings["f_price_inc"])
         else:
-            buf_str = '    arg_P = ' + "'none'"    
+            buf_str = '    arg_P = ' + '0.0'    
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)       
            
         #- arg_MR % movement ROI
         if user_strategy_settings["f_movement_roi"] > 0:
             buf_str = '    arg_MR =  ' + self.normalyze_percents(user_strategy_settings["f_movement_roi"])
         else:
-            buf_str = '    arg_MR = ' + "'none'"
+            buf_str = '    arg_MR = ' + '0.0'
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
 
         # Optimal stoploss designed for the strategy.
         if user_strategy_settings["f_stop_loss"] != 0:
             buf_str = '    stoploss = -' + self.normalyze_percents(user_strategy_settings["f_stop_loss"])
         else:
-            buf_str = '    stoploss = ' + "'none'"
+            buf_str = '    stoploss = ' + '0.0'
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
 
         # Optimal time-depended stoploss designed for the strategy.
         if user_strategy_settings["f_my_stop_loss_time"] != 0:
             buf_str = '    my_stoploss = np.array([' + str(user_strategy_settings["f_my_stop_loss_time"]) + ', -'+ self.normalyze_percents(user_strategy_settings["f_my_stop_loss_value"]) + '])'
         else:
-            buf_str = '    my_stoploss = ' + "'none'"    
+            buf_str = '    my_stoploss = np.array([0, 0.0])'    
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True) 
 
         #(S = desired Stop-Loss Value)
         if user_strategy_settings["f_des_stop_loss"] != 0:
             buf_str = '    arg_stoploss =  ' + self.normalyze_percents(user_strategy_settings["f_des_stop_loss"])
         else:
-            buf_str = '    arg_stoploss = ' + "'none'"
+            buf_str = '    arg_stoploss = ' + '0.0'
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
 
         # for MACD strategy
@@ -588,7 +590,7 @@ class BackTestApp():
         time_1 = ttime.time()
         time_interval = 0
 
-        test_time_range = 7 #minute
+        test_time_range = 15 #minute
         self.one_percent = test_time_range*60/100
                         
         with client.invoke_shell() as ssh:
@@ -629,7 +631,7 @@ class BackTestApp():
                     try:
                         part = ssh.recv(max_bytes).decode("utf-8")
                         self.list_info.append(part)
-                        print(self.list_info)
+#                        print(self.list_info)
                         ttime.sleep(0.5)
 #                        if (time_interval >= test_time_range) and (test_time_range < 7) and (not("Closing async ccxt session" in part)):
 #                            test_time_range += 1
@@ -639,11 +641,18 @@ class BackTestApp():
                         continue
 
                 if "Closing async ccxt session" in part:
+                    
                     self.cur_progress = 100
                     progress_description = 'Back test progress (' + str(self.cur_progress) + '%)'
                     self.progress_recorder.set_progress(self.cur_progress, 100, description = progress_description)
-
+                    self.list_info.append('The test was completed successfully!')
+                else :
+                    if (time_interval >= test_time_range):
+                        self.list_info.append('Test was broke) by timeout!')
+            
             self.list_info.append('________________________________________')
+            print(self.list_info)
+            print('---------------------')
 #            self.reset_pb_test()
 
             client.close()

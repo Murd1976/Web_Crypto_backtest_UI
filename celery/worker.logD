@@ -822,3 +822,39 @@ Trying again in 2.00 seconds... (1/100)
             leak, never use this setting in production environments!
   warnings.warn('''Using settings.DEBUG leads to a memory
 
+[2022-10-27 14:00:03,422: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+
+[2022-10-27 14:42:20,271: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+
+[2022-10-27 16:37:45,237: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+
+[2022-10-27 16:38:28,731: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+
+[2022-10-28 08:58:55,781: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+
+[2022-10-28 10:37:59,745: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+
+[2022-10-28 12:20:05,208: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+
+[2022-10-28 12:29:32,446: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+
+[2022-10-28 12:34:14,085: WARNING/MainProcess] /home/murd/buf/web_crypto_back/.venv/lib/python3.8/site-packages/celery/fixups/django.py:203: UserWarning: Using settings.DEBUG leads to a memory
+            leak, never use this setting in production environments!
+  warnings.warn('''Using settings.DEBUG leads to a memory
+
