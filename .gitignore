@@ -1,0 +1,7 @@
+*.log 
+redis.*
+celery/
+reports/
+crypto_back/__pycache__/
+crypto_back/migrations/__pycache__/
+

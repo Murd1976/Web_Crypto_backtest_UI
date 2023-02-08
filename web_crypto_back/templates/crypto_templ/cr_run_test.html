@@ -27,41 +27,246 @@
 <!-- Row number one --> 
   <div class="row border">
 	<!-- Column number one -->
-	<div class="col-6 border">
-      	<div class="row ml-4">
-          {{ form.f_strategies.label_tag }}
-        </div>
-      	<div class="row ml-4">
-		    <div class="col_md-auto form-inline">
+	<div class="col-4 border">
+      	<div class="row ml-2">
+			<div class="col-4">
+			  <b>{{ form.f_strategies.label_tag }}</b>
+			</div>
+			<div class="col-2">&nbsp</div>
+			<div class="col-4">
+			  {{ form.f_reports.label_tag }}
+			</div>
+		</div>
+		<div class="row ml-2">
+			<div class="col-4">
               {{ form.f_strategies }}
             </div>
-	    	<div class="col">&nbsp</div>
-  		</div>
-        <div class="row">&nbsp</div>
-      	<div class="row ml-4">
-           {{ form.f_reports.label_tag }}
-        </div>  
-	  	<div class="row ml-4">
-		    <div class="col_md-auto form-inline">
+			<div class="col-2">&nbsp </div>
+			<div class="col-4 form-inline">
               {{ form.f_reports }}
 		    </div>
-	    	<div class="col">&nbsp</div>
-       </div> 
+		</div>
+		<div class="row">&nbsp</div>
+      	<div class="row ml-2">
+			<div class="col-auto">
+			  <b><label>Backtest range: </label></b>
+			  ( max range -10 days )
+			</div>
+		</div>
+		<div class="row ml-2">
+			<div class="col">
+			  <label>Available data: </label>
+            (  {{ start_data }} ) - 
+			(  {{ stop_data }} )
+			</div>
+	    </div>
+		
+        <div class="row ml-2">
+			<div class="col-4">
+              {{ form.f_start_data.label_tag }}
+			</div>
+			<div class="col-2">&nbsp</div>
+			<div class="col-4">
+              {{ form.f_stop_data.label_tag }}
+			</div>
+		</div>
+		<div class="row ml-1">
+		    <div class="col-6">
+              {{ form.f_start_data }}
+			</div>
+	    	<div class="col-6">
+              {{ form.f_stop_data }}
+			</div>
+		</div>
+		<div class="row">&nbsp</div>
 	</div> 
+	
 	<!-- Column number two -->
-    <div class="col-1-auto">&nbsp</div>
- 	<div class="col ">
+    
+ 	<div class="col-2 ">
 	   {{ form.f_parts.label_tag }}
   	   {{ form.f_parts }}
 	</div>
 	<!-- Column number three -->
 	<div class="col border">
+	
+		
+		<div class="row">
+			<div class="col ">
+				<b class="mb-2"> Srategy General Settings </b>
+			</div>
+		</div>
+		<div class="row">&nbsp</div>
+		<div class="row">
+			<div class="col-3">
+				{{ form.f_max_open_trades.label_tag }}
+			</div>
+			<div class="col-1">
+                {{ form.f_max_open_trades }}
+			</div>
+			<div class="col">
+				<label>num</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-3">
+				{{ form.f_hyperopt.label_tag }}
+			</div>
+			<div class="col-1">
+                {{ form.f_hyperopt }}
+			</div>
+			<div class="col">
+				<label></label>
+			</div>
+		</div>
+	</div>	
+	
+  </div>	
+
+<!-- Row number two --> 
+  <div class="row border">
+	<!-- Column number one -->
+    <div class="col-4 border">
+		
+		<div><h5><b>BUY SIGNALS</b></h5></div>
+		<div><b>Candles Series Values</b></div>
+      	<div class="row">&nbsp</div>
+		<div class="row">
+			<div class="col-6 ">
+				{{ form.f_series_len.label_tag }}
+			</div>
+			<div class="col-auto ">
+				{{ form.f_series_len }}
+			</div>
+			<div class="col-1">
+				<label>amount</label> 
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6 ">
+				{{ form.f_price_inc.label_tag }}
+			</div>
+			<div class="col-auto ">
+				{{ form.f_price_inc }}
+			</div>
+			<div class="col-1">
+				<label>%</label> 
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6 ">
+				{{ form.f_persent_same.label_tag }}
+			</div>
+			<div class="col-auto ">
+				{{ form.f_persent_same }}
+			</div>
+			<div class="col-1">
+				<label>%</label> 
+			</div>
+		</div>
+		
+	</div>
+	
+	<!-- Column number two -->
+	<div class="col ">
+		<div><b>Settings for BeepBoop Strategy</b></div>
+      	<div class="row">&nbsp</div>
+		
+		<div class="row">
+			<div class="col-4 ">
+				{{ form.f_slow_len.label_tag }}
+			</div>
+			<div class="col-auto ">
+				{{ form.f_slow_len }}
+			</div>
+			<div class="col-2">
+				<label>amount</label> 
+			</div>
+			
+			<div class="col-2 ">
+				{{ form.f_sma_source_enable.label_tag }}
+			</div>
+			<div class="col ">
+				{{ form.f_sma_source_enable }}
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-4 ">
+				{{ form.f_fast_len.label_tag }}
+			</div>
+			<div class="col-auto ">
+				{{ form.f_fast_len }}
+			</div>
+			<div class="col-2">
+				<label>amount</label> 
+			</div>
+			
+			<div class="col-2 ">
+				{{ form.f_sma_signal_enable.label_tag }}
+			</div>
+			<div class="col ">
+				{{ form.f_sma_signal_enable }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-4 ">
+				{{ form.f_ema_trend.label_tag }}
+			</div>
+			<div class="col-auto ">
+				{{ form.f_ema_trend }}
+			</div>
+			<div class="col-2">
+				<label>amount</label> 
+			</div>
+			
+			<div class="col-2 ">
+				{{ form.f_ema_signal_enable.label_tag }}
+			</div>
+			<div class="col ">
+				{{ form.f_ema_signal_enable }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-4 ">
+				{{ form.f_source.label_tag }}
+			</div>
+			<div class="col-auto ">
+				{{ form.f_source }}
+			</div>
+			
+		</div>
+		<div class="row">
+			<div class="col-4 ">
+				{{ form.f_series_len_beepboop.label_tag }}
+			</div>
+			<div class="col-auto ">
+				{{ form.f_series_len_beepboop }}
+			</div>
+			<div class="col-2">
+				<label>amount</label> 
+			</div>
+			
+		</div>
+		
+	</div>
+
+  </div>
+
+<!-- Row number three -->   
+  <div class="row border">
+		
+	<!-- Column number one -->
+	<div class="col-4 ">
+		<div class="row">&nbsp </div>
+		<div><b>Settings for MACD Strategy</b></div>
 		<div class="row">&nbsp </div>
 		<div class="row">
 			<div class="col-6 ">
 				{{ form.f_buy_cci.label_tag }}
 			</div>
-			<div class="col-auto">
+			<div class="col-auto" >
+				
 				{{ form.f_buy_cci }}
 			</div>
 			
@@ -78,122 +283,11 @@
 		</div>
 		<div class="row">&nbsp </div>
 	</div>
-	
-  </div>	
-
-<!-- Row number two --> 
-  <div class="row border">
-	<!-- Column number one -->
-    <div class="col-6 border">
-      	<div class="row">&nbsp</div>
-		<div class="row">
-			<div class="col-4 ">
-				{{ form.f_series_len.label_tag }}
-			</div>
-			<div class="col-auto ">
-				{{ form.f_series_len }}
-			</div>
-			<div class="col">
-				<label>amount</label> 
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-4 ">
-				{{ form.f_price_inc.label_tag }}
-			</div>
-			<div class="col-auto ">
-				{{ form.f_price_inc }}
-			</div>
-			<div class="col">
-				<label>%</label> 
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-4 ">
-				{{ form.f_persent_same.label_tag }}
-			</div>
-			<div class="col-auto ">
-				{{ form.f_persent_same }}
-			</div>
-			<div class="col">
-				<label>%</label> 
-			</div>
-		</div>
-	</div>
-	<!-- Column number two -->
-	<div class="col-3-auto ">
-      	<div class="row">
-          	<div class="col-1">&nbsp</div>
-        	<div class="col-auto">
-              <label><h7>Minimal ROI:</h7></label> 
-            </div>
-      	</div>
-		<div class="row ">
-          	<div class="col-1">&nbsp</div>
-          	<div class="col-auto">
-				{{ form.f_min_roi_time1 }}
-			</div>
-			<div class="col-auto">
-				<label>min</label>
-			</div>
-			<div class="col-auto">
-				{{ form.f_min_roi_value1 }}
-			</div>
-			<div class="col">
-				<label>%</label>
-			</div>
-		</div>
-		<div class="row ">
-          	<div class="col-1">&nbsp</div>
-			<div class="col-auto">
-				{{ form.f_min_roi_time2 }}
-			</div>
-			<div class="col-auto">
-				<label>min</label>
-			</div>
-			<div class="col-auto">
-				{{ form.f_min_roi_value2 }}
-			</div>
-			<div class="col">
-				<label>%</label>
-			</div>
-		</div>
-		<div class="row ">
-          	<div class="col-1">&nbsp</div>
-			<div class="col-auto">
-				{{ form.f_min_roi_time3 }}
-			</div>
-			<div class="col-auto">
-				<label>min</label>
-			</div>
-			<div class="col-auto">
-				{{ form.f_min_roi_value3 }}
-			</div>
-			<div class="col-auto">
-				<label>%</label>
-			</div>
-		</div>
-		<div class="row ">
-          	<div class="col-1">&nbsp</div>
-			<div class="col-auto">
-				{{ form.f_min_roi_time4 }}
-			</div>
-			<div class="col-auto">
-				<label>min</label>
-			</div>
-			<div class="col-auto">
-				{{ form.f_min_roi_value4 }}
-			</div>
-			<div class="col">
-				<label>%</label>
-			</div>
-		</div>
-				
-	</div>
-	
-	<!-- Column number three -->
-	<div class="col border">
 		
+	<!-- Column number two -->
+	<div class="col border">
+		<div class="row">&nbsp </div>
+		<div class="col"><b>Settings for Scalp Strategy</b></div>
 		<div class="row">
 			<div class="col-3 ">
 				<label>Method: </label>
@@ -263,6 +357,7 @@
 			</div>
 		</div>
 		<div class="row">
+		
 			<div class="col-3 ">
 				<label>MFI: </label>
 			</div>
@@ -295,23 +390,124 @@
 			</div>
 		</div>
 	</div>
-<!--    
-	<div class="col ">
-		<div class="col ">
-  	    	<div class="row">&nbsp</div>
-			<div class="row ">
-				{{ form.f_roi_flags }}
+
+  </div>
+  
+  <!-- Row number fore -->   
+  <div class="row ">
+	<div class="col">
+		<div class="row">&nbsp </div>
+		<h5><b>SELL SIGNALS</b></h5>
+	</div>
+</div>
+
+  <!-- Row number five -->   
+  <div class="row border">
+	
+	<!-- Column number one -->
+	<div class="col-3 ">
+      	<div class="row">
+          	<div class="col-1">&nbsp</div>
+        	<div class="col-auto">
+              <label><h7>Minimal ROI:</h7></label> 
+            </div>
+			
+      	</div>
+		<div class="col-1">after</div>
+		<div class="row ">
+          	<div class="col-1">&nbsp</div>
+          	<div class="col-2">
+				{{ form.f_min_roi_time1 }}
+			</div>
+			<div class="col-2">
+				<label>min</label>
+			</div>
+			<div class="col-2">
+				{{ form.f_min_roi_value1 }}
+			</div>
+			<div class="col">
+				<label>%</label>
 			</div>
 		</div>
+		<div class="row ">
+          	<div class="col-1">&nbsp</div>
+			<div class="col-2">
+				{{ form.f_min_roi_time2 }}
+			</div>
+			<div class="col-2">
+				<label>min</label>
+			</div>
+			<div class="col-2">
+				{{ form.f_min_roi_value2 }}
+			</div>
+			<div class="col">
+				<label>%</label>
+			</div>
+		</div>
+		<div class="row ">
+          	<div class="col-1">&nbsp</div>
+			<div class="col-2">
+				{{ form.f_min_roi_time3 }}
+			</div>
+			<div class="col-2">
+				<label>min</label>
+			</div>
+			<div class="col-2">
+				{{ form.f_min_roi_value3 }}
+			</div>
+			<div class="col-auto">
+				<label>%</label>
+			</div>
+		</div>
+		<div class="row ">
+          	<div class="col-1">&nbsp</div>
+			<div class="col-2">
+				{{ form.f_min_roi_time4 }}
+			</div>
+			<div class="col-2">
+				<label>min</label>
+			</div>
+			<div class="col-2">
+				{{ form.f_min_roi_value4 }}
+			</div>
+			<div class="col">
+				<label>%</label>
+			</div>
+		</div>
+		
+		<div class="row">&nbsp </div>
+		<div class="row">
+			<div class="col-1">&nbsp</div>
+			<div class="col-4 ">
+				{{ form.f_min_roi_beepboop.label_tag }}
+			</div>
+			
+			<div class="col-2 ">
+				{{ form.f_min_roi_beepboop }}
+			</div>
+			<div class="col-auto">
+				<label>%</label> 
+			</div>
+		</div>
+		
+		
+				
 	</div>
--->    
-  </div>
-
-<!-- Row number three -->   
-  <div class="row border">
-	<!-- Column number one -->
-	<div class="col-6 border">
+	<!-- Column number two -->
+	<div class="col-3 border">
+		<div><b>Trailing Stop Loss</b></div>
       	<div class="row">&nbsp</div>
+		<div class="row">
+			<div class="col-4">
+				{{ form.f_movement_roi.label_tag }}
+			</div>
+			<div class="col-auto">
+                {{ form.f_movement_roi }}
+			</div>
+			<div class="col-auto">
+				<label>%</label>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-4 ">
 				{{ form.f_des_stop_loss.label_tag }}
@@ -319,10 +515,17 @@
 			<div class="col-auto ">
 				{{ form.f_des_stop_loss }}
 			</div>
-			<div class="col">
+			<div class="col-auto">
 				<label>%</label> 
 			</div>
 		</div>
+	</div>
+	
+	<!-- Column number three -->
+	<div class="col-4 ">
+		<div><b>Stop Loss Values</b></div>
+      	<div class="row">&nbsp</div>
+		
 		<div class="row">
 			<div class="col-4 ">
 				{{ form.f_stop_loss.label_tag }}
@@ -330,7 +533,7 @@
 			<div class="col-auto ">
 				{{ form.f_stop_loss }}
 			</div>
-			<div class="col">
+			<div class="col-auto">
 				<label>%</label> 
 			</div>
         </div>
@@ -347,53 +550,45 @@
 			<div class="col-auto">
 				{{ form.f_my_stop_loss_value }}
 			</div>
-			<div class="col">
+			<div class="col-auto">
 				<label>%</label>
 			</div>
 		</div>
-      	<div class="row">&nbsp </div>
-	</div>
-	
-	<!-- Column number two -->
-	<div class="col ">
-		<div class="row">&nbsp </div>
+      	
+		
 		<div class="row">
-			<div class="col-3">
-				{{ form.f_movement_roi.label_tag }}
+			<div class="col-4 ">
+				{{ form.f_loss_beepboop.label_tag }}
 			</div>
-			<div class="col-1">
-                {{ form.f_movement_roi }}
+			<div class="col-auto ">
+				{{ form.f_loss_beepboop }}
 			</div>
-			<div class="col">
+			<div class="col-auto">
+				<label>%</label> 
+			</div>
+        </div>
+		
+		<div class="row ">
+			<div class="col-4 ">
+				{{ form.f_my_force_exit_time.label_tag }}
+			</div>
+			<div class="col-auto">
+				{{ form.f_my_force_exit_time }}
+			</div>
+			<div class="col-auto">
+				<label>min</label>
+			</div>
+			<div class="col-auto">
+				{{ form.f_my_force_exit_value }}
+			</div>
+			<div class="col-auto">
 				<label>%</label>
 			</div>
 		</div>
-		<div class="row">&nbsp </div>
-		<div class="row">
-			<div class="col-3">
-				{{ form.f_max_open_trades.label_tag }}
-			</div>
-			<div class="col-1">
-                {{ form.f_max_open_trades }}
-			</div>
-			<div class="col">
-				<label>num</label>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-3">
-				{{ form.f_hyperopt.label_tag }}
-			</div>
-			<div class="col-1">
-                {{ form.f_hyperopt }}
-			</div>
-			<div class="col">
-				<label></label>
-			</div>
-		</div>
 	</div>
-
   </div>
+  
+  
 <!--  
   <div class="row border">
     <div class="col-fluid">
@@ -420,7 +615,7 @@
 	function processProgress(progressBarElement, progressBarMessageElement, progress) {
 			progressBarElement.style.width = progress.percent + "%";
 			
-			var description = progress.description || "Starting create report...";
+			var description = progress.description || "Starting task...";
 			progressBarMessageElement.innerHTML = description;
 		}
 	

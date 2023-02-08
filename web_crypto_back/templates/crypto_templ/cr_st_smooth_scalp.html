@@ -4,6 +4,58 @@
 {% block content %}
 <h2> The Reinforced Smooth Scalp strategy with Candle TRAILING Stop-Loss </h2>
 <br>
+<p>
+<b>ADX (Average Directional Movement Index)</b><br>
+To quantify the trend’s strength, the calculation of the Average Directional Index is based on a moving average of a price range expansion over a certain timeframe.<br>
+the ADX values measures trend strength, and a rising ADX means that the trend is gaining strength, <br>
+a falling ADX shows a trend that is losing momentum or reversing and a flat ADX shows a sideways range. 
+</p>
+<p>
+Buy ADX -parameter that determines the low deviation at which the BUY indicator will be generated. For this strategy available range (20 .. 50)<br>
+Sell ADX -parameter that determines the up deviation at which the SELL indicator will be generated. For this strategy available range (50 .. 100)
+</p>
+
+<p>
+<b>MFI (Money Flow Index) </b><br>
+Is a technical indicator that generates overbought or oversold signals using both prices and volume data.
+</p>
+<p>
+Buy MFI -parameter that determines the low deviation at which the BUY indicator will be generated. For this strategy available range (10 .. 25)<br>
+Sell MFI -parameter that determines the up deviation at which the SELL indicator will be generated. For this strategy available range (75 .. 100)
+</p>
+<p>
+<b>FastK (STOCHF - Stochastic Fast)</b><br>
+The fast stochastic indicator (%K) is a momentum technical indicator that aims to measure the trend in prices and identify trend reversals.
+</p>
+<p>
+Buy FastK -parameter that determines the low deviation at which the BUY indicator will be generated. For this strategy available range (10 .. 45)<br>
+Sell FastK -parameter that determines the up deviation at which the SELL indicator will be generated. For this strategy available range (50 .. 100)
+</p>
+<p>
+<b>FastD (STOCHF - Stochastic Fast)</b><br>
+There is also a second quantity computed known as %D, which is the 3-day SMA of the %K. It is a smoothed version of the %K. <br>
+It is computed because %K is a volatile indicator and can lead to spurious signals. <br>
+A smoothed version (%D) moves much slower than the %K; hence the signals generated indicate a stronger trend.
+</p>
+<p>
+Buy FastD -parameter that determines the low deviation at which the BUY indicator will be generated. For this strategy available range (10 .. 45)<br>
+Sell FastD -parameter that determines the up deviation at which the SELL indicator will be generated. For this strategy available range (50 .. 100)
+</p>
+
+<p>
+<b>CCI (Commodity Channel Index). </b><br> 
+CCI is calculated with the following formula:<br>
+
+    (Typical Price - Simple Moving Average) / (0.015 x Mean Deviation)<br><br>
+	
+The CCI compares the current price to an average price over a period of time. <br>
+The indicator fluctuates above or below zero, moving into positive or negative territory.	
+</p>
+<p>
+
+Sell CCI -parameter that determines the positive deviation at which the SELL indicator will be generated. For this strategy available range (100 .. 200)
+</p>
+
 <p>This strategy is based around the idea of generating <br>
 a lot of potentatils buys and make tiny profits on each trade<br>
 we recommend to have at least 60 parallel trades at any time <br>

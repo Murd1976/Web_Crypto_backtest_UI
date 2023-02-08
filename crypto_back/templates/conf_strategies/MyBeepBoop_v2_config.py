@@ -1,15 +1,15 @@
-#  2022-06-15 / 22:30:03
+#  2022-11-11 / 08:58:46
  
 import numpy as np 
 class config_strategy(): 
-    minimal_roi = {
-        "0":  0.02
-        }
-    arg_N = 0
+    minimal_roi = { 
+        "0":  0.02,        
+    }
+    arg_N = 9
     arg_R = 0
     arg_P = 0.0
-    arg_MR = 0.0
-    stoploss = -0.1
+    arg_MR =  0.0
+    stoploss = -0.01
     my_stoploss = np.array([32, -0.00])
     arg_stoploss =  0.0
 #
@@ -21,8 +21,9 @@ class config_strategy():
     fast_len_val = 12
 
 # for Beep Boop strategy        
-    ema_trend_val = 50
+    ema_trend_val = 200
     source_val = 'close'
+    
     sma_source_enable_val = False
     sma_signal_enable_val = False
     ema_signal_enable_val = False
@@ -57,3 +58,4 @@ class config_strategy():
 #
 # for Hyper opt
     hyperopt =  False
+

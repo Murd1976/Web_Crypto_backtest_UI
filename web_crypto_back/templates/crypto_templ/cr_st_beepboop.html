@@ -1,0 +1,91 @@
+{% extends "crypto_templ/cr_base.html" %}
+{% block title %} BeepBoop Strategy {% endblock %}
+
+{% block content %}
+<h2> The BeepBoop strategy with Candle TRAILING Stop-Loss </h2>
+
+<p><pre>The beep boop indicator is originally based on the MACD 12-26 and the 50 bar EMA. 
+It also adds an emotional state either 'calm' or 'angry' which can affect how it trades.
+</pre>
+</p>
+
+<p>
+<b>MACD (Moving Average Convergence Divergence). </b><br> 
+MACD is based on how moving averages act against one another. <br>
+If the 2 averages come together, known as convergence, this might be interpreted as a reversal is coming. <br>
+If the averages are moving apart, known as divergence then the current trend could be continuing. <br><br>
+
+<b>EMA is Exponential Moving Average. </b><br>
+It is a weighted average with more importance given to recent price data. <br>
+This differentiates it from SMA which is Simple Moving Average which treats all price data, recent and older, the same.. <br>
+</p>
+
+<p>
+<b>The Beep Boop indicator</b> <br>
+The custom indicator uses a histogram of the MACD indicator. <br>
+It uses a 1-minute chart where the spreads will be a lot bigger, which makes trading more difficult, <br>
+and will also execute 1 trade a minute which is probably beyond the means and stress levels of a human trader.<br>
+</p>
+<p>
+<u><b>BEEP BOOP v1</b></u> <br>
+In first version of the Beep Boop indicator, the very simple methodology of the bot is that if it sees 2 green bars in a row, <br>
+from the histogram of the MACD indicator, then it takes a long position. <br>
+
+If there are 2 red bars in a row it will take a short position. <br>
+
+</p>
+<p>
+<u><b>BEEP BOOP v2</b></u> <br>
+Here the beep boop indicator gives buy and sell signals at the same time. <br>
+
+The main changes are that now buy is when the first green bar appears, sell is when the first red bar appears. <br>
+An exit is when the white bar appears, there is no explanation of a white bar is. Also the price no longer needs to be above <br>
+or below the 50 period EMA Exponential Moving Average, you change this if you like. <br>
+
+For  example: <br>
+If there is a green bar and the price is above the 200 period moving average then the long entry signal is on the first green bar. <br>
+The stoploss then goes below the pullback. <br>
+If there is a red bar and the price is below the 200 period moving average, then the short entry signal is at the first red bar. <br>
+The stoploss goes above the pullback. <br>
+<br>
+<b>Buy conditions </b><br>
+<u>Buy condition 1: </u><br>
+IF price difference between last red MACD candle from previous last green MACD candle < P, THEN "DO NOT BUY" <br>
+or considering the price value, that is: <br>
+IF (100*([N close price]/[PM close price]) - 100) < P, THEN "DO NOT BUY" <br>
+comment: this condition is useful to identify trend and price amplitude, <br>
+to trigger a buy only when there are bigger price movements and ignore the small fluctuations <br>
+<br>
+<u>Buy condition 2: </u> <br>
+% of RED Candles from previous last green) is < R, then do not buy, or as we already have in other strategies: <br>
+IF candles from PM to candle N DOES NOT have at least R% of candles with change < 0, THEN "DO NOT BUY" <br>
+comment: this condition is useful to identify how strong is a trend, to trigger a buy only when there are bigger trends and ignore the smaller <br>
+<br>
+<u>Buy condition 3: </u> <br>
+time/number of candles - if the total number of candles from PM to N < T, THEN "DO NOT BUY" <br>
+comment: this condition is useful to identify how long is a trend, to trigger a buy only when there are longer trends and ignore the shorter <br>
+<br>
+<b>Sell conditions </b><br>
+Taking the prices and number of candles (not MACD candle, but the standard price candles) <br>
+<br>
+<u>Sell condition 1: </u> <br>
+min ROI - IF min ROI not met, THEN "DO NOT SELL" <br>
+<br>
+
+<u>Sell condition 2: </u> <br>
+max LOSS - IF max LOSS not met, then "DO NOT SELL" <br>
+<br>
+</p><br>
+
+
+<p>
+<b>The Conclusion</b> <br>
+When the price was trending strongly the beep boop indicator performed really well. <br>
+The stoploss also worked well when it was in a trend.<br>
+However, when the trend direction changed it gave false signals. <br>
+Ideal conditions for the beep boop indicator are when the market is giving quite small pullbacks in a one-sided market.<br>
+</p><br>
+
+<p> All rights reserved &laquo; Christian &raquo; </p>
+{% endblock %}
+
