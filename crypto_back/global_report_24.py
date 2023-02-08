@@ -360,6 +360,7 @@ class rep_from_test_res():
         			res_df['av_max_rate'].iloc[-1] = max_r
         			res_df['av_min_rate'].iloc[-1] = min_r
 
+                    #Calculating progress for progressbar
         			self.cur_progress = round((self.bar_step+z*len(self.N_candle_analyze)+len(self.N_pre_candle_analyze)*len(buf_df)+cc+1)/self.one_percent, 2)
         			# Build description
 #        			progress_description = 'Calculating (' + str(self.cur_progress) + '%)'
@@ -434,7 +435,8 @@ class rep_from_test_res():
         		res_df_24['av_24h_volume'][idnex_count] = df_pair_1d['volume'].tail(10).mean()
 	#Last 24 hours Volume in USDT - simply from 24h candles data
         		df_temp = df_pair_1d['volume'].loc[df_pair_1d['date'] <= b]
-        		res_df_24['last_24h_volume'][idnex_count] = df_temp.iloc[-2]
+        		if len(df_temp) > 2:
+        			res_df_24['last_24h_volume'][idnex_count] = df_temp.iloc[-2]
 	#Average 24 hours Amplitude (in the last 7 or 10 days) - simply from 24h candles data
         		df_temp = df_pair_1d['high']/df_pair_1d['open']*100-100
         		res_df_24['av_24h_amplitude_up'][idnex_count] = df_temp.mean()
@@ -442,10 +444,11 @@ class rep_from_test_res():
         		res_df_24['av_24h_amplitude_down'][idnex_count] = df_temp.mean()
 	#Last 24 hours Amplitude - simply from 24h candles data
         		df_temp = df_pair_1d.loc[df_pair_1d['date'] <= b]
-        		res_df_24['last_24h_amplitude_up'][idnex_count] = (df_temp['high'].iloc[-2]/df_temp['open'].iloc[-2]*100-100)
-        		res_df_24['last_24h_amplitude_down'][idnex_count] = (df_temp['low'].iloc[-2]/df_temp['open'].iloc[-2]*100-100)
+        		if len(df_temp) > 2:
+        			res_df_24['last_24h_amplitude_up'][idnex_count] = (df_temp['high'].iloc[-2]/df_temp['open'].iloc[-2]*100-100)
+        			res_df_24['last_24h_amplitude_down'][idnex_count] = (df_temp['low'].iloc[-2]/df_temp['open'].iloc[-2]*100-100)
 	#Last 24 hours SMA - simply from 24h candles data        
-        		res_df_24['last_24h_SMA'][idnex_count] = df_temp['close'].iloc[-2]/cur_buy_price*100-100
+        			res_df_24['last_24h_SMA'][idnex_count] = df_temp['close'].iloc[-2]/cur_buy_price*100-100
 	#Last 24 hours SMA - calculate 24h from the buy signal
         		df_temp = df_pair_1h.loc[df_pair_1h['date'] <= b]
         		df_temp =  df_temp['close'][-25:-1].mean()

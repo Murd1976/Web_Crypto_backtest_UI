@@ -41,6 +41,8 @@ class BackTestApp():
 #    port = 3022
 #    username = "7441-732"
 
+    version = 2.2
+
     hostname = ssh_conf.hostname
     port = ssh_conf.port
     username = ssh_conf.username
@@ -64,6 +66,27 @@ class BackTestApp():
         
     my_rep = rep_from_test_res() #создаем объект нашего собственного класса rep_from_test_res()
 
+
+    def delete_tests(self, f_path, delete_list):
+        #print(results_path)
+        #list_dir = .listdir(path=results_path)
+        #print('Existed: ', f_path + delete_list)
+        for del_item in delete_list:
+            del_item = str(del_item)
+              
+            try:
+              print('Locked for: ', f_path + del_item)
+              if os.path.exists(f_path + del_item):
+                  print('Existed: ', f_path + del_item)
+                  os.remove(f_path + del_item)
+                  self.list_info.append("Deleted file: " + del_item)
+            except:
+              self.list_info.append("Can't delete file: " + del_item)
+            finally:   
+              self.list_info.append('________________________________________') 
+        
+        return 'Ok'
+    
     def delete_results(self, user_name, delete_list):
 
         for i in range(self.num_try):
@@ -189,14 +212,18 @@ class BackTestApp():
 #        self.username = self.lineEdit_Login.text()
 #        self.password = self.lineEdit_Password.text()
        
-        
-        client = self.get_ssh_connect() #создаем ssh-подключение
-        if client != 'error':
-            sftp_client = client.open_sftp()
-            current_dir = sftp_client.getcwd()
-        else:
-
+        for i in range(self.num_try):
+            client = self.get_ssh_connect() #создаем ssh-подключение
+            if client != 'error':
+                sftp_client = client.open_sftp()
+                current_dir = sftp_client.getcwd()
+                break
+        if client == 'error':
+            self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (get_strategy)")
+            self.list_info.append('________________________________________')
+            #print('info: ', self.list_info)
             return list_strategies, list_backtest
+                
         
         #Проверяем наличие, на сервере, полльзователького каталога, если такго не существует - создаем
         try:
@@ -241,7 +268,7 @@ class BackTestApp():
         
         sftp_client.close()
         client.close()
-
+        #print('info: ', self.list_info)
         return list_strategies, list_backtest
             
     def get_strategy(self, f_name: str):
@@ -251,10 +278,10 @@ class BackTestApp():
             if client != 'error':
                 sftp_client = client.open_sftp()
                 break
-            else:
-                self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (get_strategy)")
-                self.list_info.append('________________________________________')
-                return
+        if client == 'error':
+            self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (get_strategy)")
+            self.list_info.append('________________________________________')
+            return 'error'
 
         try:
             remote_file = sftp_client.open (self.server_directory + self.server_strategy_directory + f_name) # Путь к файлу
@@ -274,7 +301,7 @@ class BackTestApp():
             remote_file.close()
 
         client.close()
-        print('strategy_name: ', strategy_name)
+        #print('strategy_name: ', strategy_name)
         return strategy_name
 
     def run_report(self, backtest_file_name, mode, user_name):
@@ -306,28 +333,34 @@ class BackTestApp():
             client = self.get_ssh_connect() #создаем ssh-подключение
             if client != 'error':
                 break
-            else:
-                self.list_info.append("SSH connect to server fail after " + self.num_try + " tries... (run_report)")
-                self.list_info.append('________________________________________')
-                return
+        if client == 'error':
+            self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (get_strategy)")
+            self.list_info.append('________________________________________')
+            return 'error'
+
+            
         print('Rep-start!')    
         if client != 'error':
             sftp = client.open_sftp()
-            remote_file = sftp.open ('/' + self.server_directory + self.server_backtests_directory +self.server_user_directory + '/' + backtest_file_name, mode = 'r') # Путь к файлу
+            remote_file = sftp.open ('/' + self.server_directory + self.server_backtests_directory +self.server_user_directory + '/' + backtest_file_name, mode = 'r') # Путь к файлу results
             json_obj = json.loads(remote_file.read())
             
             self.list_info.append("Creating report, please wait... ")
-            print('Rep-start!')
             buf_str = backtest_file_name.split('.')
+            
+            conf_part = sftp.open ('/' + self.server_directory + self.server_backtests_directory +self.server_user_directory + '/' + buf_str[0] + '.conf', mode = 'r') # Путь к файлу config
+            conf_obj = []
+            for line in conf_part:
+                conf_obj.append(line.strip().strip('\n'))
+            
             if mode == 'local':
-              res_report = self.my_txt_rep.json_to_txt(json_obj, remote_file, mode, self.local_reports_directory + user_name + '/txt/', backtest_file_name)
+              res_report = self.my_txt_rep.json_to_txt(json_obj, conf_obj, remote_file, mode, self.local_reports_directory + user_name + '/txt/', backtest_file_name)
             else:
                 remote_file = sftp.open ('/' + self.server_directory + self.server_backtests_directory+self.server_user_directory + self.server_reports_directory +buf_str[0] + '.txt', mode = 'w') # Путь к файлу
                 res_report = self.my_txt_rep.json_to_txt(json_obj, remote_file, mode, self.server_reports_directory, backtest_file_name)
             self.list_info.append("Created report: ")
             self.list_info.append(buf_str[0] + '.txt')
-
-            print('Rep-1 Ok!')
+            
             res_report = self.my_rep.get_report(json_obj, mode, user_name, self.server_directory + self.server_backtests_directory+self.server_user_directory + self.server_reports_directory, backtest_file_name)
             if res_report == 'unknown series len (N)':
                 self.list_info.append("Unknown series len (N). Probably an imported strategy.")
@@ -340,9 +373,10 @@ class BackTestApp():
             self.list_info.append('________________________________________')
             rep_done =True
             sftp.close()
-            print(self.list_info)
+            for val_ls in self.list_info:
+                print(val_ls)
         else:
-            return
+            return 'error'
         
 
         return rep_done
@@ -362,15 +396,26 @@ class BackTestApp():
             datadir = " --datadir user_data/data/binance "
             export = " --export trades "
             config = " --config user_data/config_p" + user_strategy_settings["f_parts"] + ".json "
+            print(user_strategy_settings["f_start_data"])
+            print(user_strategy_settings["f_stop_data"])
+            #start_d = datetime.strptime(user_strategy_settings["f_start_data"].split('T')[0], '%Y-%m-%d')
+            #stop_d = datetime.strptime(user_strategy_settings["f_stop_data"].split('T')[0], '%Y-%m-%d')
+            start_d = user_strategy_settings["f_start_data"].split('T')[0].replace('-', '')
+            stop_d = user_strategy_settings["f_stop_data"].split('T')[0].replace('-', '')
+            print(start_d)
+            print(stop_d)
+            time_range = " --timerange=" + start_d.strip('-') + "-" + stop_d.strip('-')
             max_open_trades = ' --max-open-trades ' + str(user_strategy_settings["f_max_open_trades"])
             if user_strategy_settings["f_series_len"] > 0:
                 export_filename = " --export-filename user_data/backtest_results/" + self.server_user_directory + "/bc_" + str(user_strategy_settings["f_series_len"]) +'_p' + user_strategy_settings["f_parts"]+ '_' + buf_str + '.json'
+                res_path = "user_data/backtest_results/" + self.server_user_directory + "/bc_" + str(user_strategy_settings["f_series_len"]) +'_p' + user_strategy_settings["f_parts"]+ '_' + buf_str 
             else:
                 export_filename = " --export-filename user_data/backtest_results/" + self.server_user_directory + "/bc_0" +'_p' + user_strategy_settings["f_parts"]+ '_' + buf_str + '.json'
+                res_path = "user_data/backtest_results/" + self.server_user_directory + "/bc_0" +'_p' + user_strategy_settings["f_parts"]+ '_' + buf_str
 
             strategy = " -s "+ buf_str
             
-            run_str = "docker-compose run --rm freqtrade backtesting " + datadir+export+ config+ max_open_trades+ export_filename+strategy
+            run_str = "docker-compose run --rm freqtrade backtesting " + datadir + export + config + time_range + max_open_trades + export_filename + strategy
             print(run_str)
             self.list_info.append('Command line for run test:')
             self.list_info.append(run_str)
@@ -382,8 +427,17 @@ class BackTestApp():
         # Minimal ROI designed for the strategy.
         not_first = False
         print(user_strategy_settings)
-        buf_str = '    minimal_roi = { '
+        
+        buf_str = '# Test data range'
         strategy_settings = pd.Series([buf_str])
+        buf_str = '    start_data = ' + start_d
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    stop_data = ' + stop_d
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '    minimal_roi = { '
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
         
         if user_strategy_settings["f_min_roi_value1"] > 0:
             buf_str = '        "' + str(user_strategy_settings["f_min_roi_time1"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value1"])
@@ -431,6 +485,13 @@ class BackTestApp():
         else:
             buf_str = '    arg_MR = ' + '0.0'
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        # Optimal ROI of force exit designed for the BeepBoop strategy.
+        if user_strategy_settings["f_my_force_exit_time"] != 0:
+            buf_str = '    my_force_exit = np.array([' + str(user_strategy_settings["f_my_force_exit_time"]) + ', '+ self.normalyze_percents(user_strategy_settings["f_my_force_exit_value"]) + '])'
+        else:
+            buf_str = '    my_force_exit = np.array([0, 0.0])'    
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
 
         # Optimal stoploss designed for the strategy.
         if user_strategy_settings["f_stop_loss"] != 0:
@@ -463,6 +524,50 @@ class BackTestApp():
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
         
         buf_str = '    sell_cci =  ' + str(user_strategy_settings["f_sell_cci"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        #for Beep Boop strategy
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '# for Beep Boop strategy'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '    slow_len =  ' + str(user_strategy_settings["f_slow_len"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    fast_len =  ' + str(user_strategy_settings["f_fast_len"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    ema_trend =  ' + str(user_strategy_settings["f_ema_trend"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    source = "' +(user_strategy_settings["f_source"]) + '"'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sma_source_enable =  ' + str(user_strategy_settings["f_sma_source_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    sma_signal_enable =  ' + str(user_strategy_settings["f_sma_signal_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    ema_signal_enable =  ' + str(user_strategy_settings["f_ema_signal_enable"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        if user_strategy_settings["f_series_len_beepboop"] > 0:
+            buf_str = '    arg_T =  ' + str(user_strategy_settings["f_series_len_beepboop"])
+        else:
+            buf_str = '    arg_T = ' + '0'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        # Optimal min ROI designed for the BeepBoop strategy.
+        if user_strategy_settings["f_min_roi_beepboop"] != 0:
+            buf_str = '    arg_min_roi = ' + self.normalyze_percents(user_strategy_settings["f_min_roi_beepboop"])
+        else:
+            buf_str = '    arg_min_roi = ' + '0.0'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        # Optimal stoploss designed for the BeepBoop strategy.
+        if user_strategy_settings["f_loss_beepboop"] != 0:
+            buf_str = '    arg_max_loss = -' + self.normalyze_percents(user_strategy_settings["f_loss_beepboop"])
+        else:
+            buf_str = '    arg_max_loss = ' + '0.0'
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
         
         #for Smooth Scalp strategy
@@ -545,10 +650,11 @@ class BackTestApp():
             client = self.get_ssh_connect() #создаем ssh-подключение
             if client != 'error':
                 break
-            else:
-                self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (run_report)")
-                self.list_info.append('________________________________________')
-                return
+        if client == 'error':
+            self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (get_strategy)")
+            self.list_info.append('________________________________________')
+            
+            
         if client != 'error':
             sftp_client = client.open_sftp()
             remote_file = sftp_client.open ('/' + self.server_directory + self.server_strategy_directory + file_config, mode = 'w') # Путь к файлу
@@ -568,7 +674,7 @@ class BackTestApp():
                 sftp_client.close()
 
         else:
-            return
+            return 'error'
 
         self.list_info.append('Settings for current test:')
         for buf_str in strategy_settings:
@@ -576,23 +682,24 @@ class BackTestApp():
 
         self.list_info.append('Saved in config file: ' + file_config)   
         self.list_info.append('________________________________________')
-        print(self.list_info)
+        #for val_ls in self.list_info:
+        #    print(val_ls)
 
         for i in range(self.num_try):
             client = self.get_ssh_connect() #создаем ssh-подключение
             if client != 'error':
                 break
-            else:
-                self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (run_report)")
-                self.list_info.append('________________________________________')
-                return
+        if client == 'error':
+            self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (run_report)")
+            self.list_info.append('________________________________________')
+            return 'error'
 
         time_1 = ttime.time()
         time_interval = 0
 
         test_time_range = 15 #minute
         self.one_percent = test_time_range*60/100
-                        
+        print('Path for results: ', res_path)                
         with client.invoke_shell() as ssh:
             ssh.recv(max_bytes)
             self.list_info.append('________________________________________')
@@ -610,8 +717,8 @@ class BackTestApp():
 
             commands = [run_str]  # команда(строка) для запуска бектеста с заданными параметрами
             result = {}
-            wating_test_result = 300
-            pb_step = wating_test_result/100
+#            wating_test_result = 300
+#            pb_step = wating_test_result/100
 #            self.timer.start(round(pb_step*1000))
             for command_ in commands:
                 ssh.send(f"{command_}\n")
@@ -640,58 +747,155 @@ class BackTestApp():
                     except socket.timeout:
                         continue
 
+               # if res_path in part:
+               #     print(part)
+               #     print(part.split('\n'))
+
                 if "Closing async ccxt session" in part:
                     
                     self.cur_progress = 100
                     progress_description = 'Back test progress (' + str(self.cur_progress) + '%)'
                     self.progress_recorder.set_progress(self.cur_progress, 100, description = progress_description)
                     self.list_info.append('The test was completed successfully!')
-                else :
-                    if (time_interval >= test_time_range):
-                        self.list_info.append('Test was broke) by timeout!')
+                    
+                    self.save_current_config(strategy_settings)
+                else: 
+                    if "ERROR - Fatal exception" in part:
+                        self.cur_progress = 100
+                        progress_description = 'Back test progress (' + str(self.cur_progress) + '%)'
+                        self.progress_recorder.set_progress(self.cur_progress, 100, description = progress_description)
+                        self.list_info.append('The test was completed successfully!')
+                    
+                        self.save_current_config(strategy_settings)
+                    else:
+                        if (time_interval >= test_time_range):
+                            self.list_info.append('Test was broke) by timeout!')
             
             self.list_info.append('________________________________________')
-            print(self.list_info)
+            for val_ls in self.list_info:
+                print(val_ls)
             print('---------------------')
 #            self.reset_pb_test()
 
             client.close()
+    def save_current_config(self, cur_config):
+    
+        for i in range(self.num_try):
+            client = self.get_ssh_connect() #создаем ssh-подключение
+            if client != 'error':
+                break
+        if client == 'error':
+            self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (run_report)")
+            self.list_info.append('________________________________________')
+            return 'error'
+            
+        if client != 'error':
+            try:
+                sftp = client.open_sftp()
+            
+                remote_file = sftp.open ('/' + self.server_directory + self.server_backtests_directory +self.server_user_directory + '/.last_result.json', mode = 'r') # Путь к файлу
+                json_obj = json.loads(remote_file.read())
+                last_f_name = str(json_obj['latest_backtest']).split('.')
+                remote_file.close()
+                res_path = '/' + self.server_directory + self.server_backtests_directory +self.server_user_directory + '/' + last_f_name[0] + '.conf'
+                print('Current config saved to: ', res_path)
+                remote_file = sftp.open (res_path, mode = 'w') # Путь к файлу
+            
+                            
+                # сохранить файл конфигурации тестируемой стратегии в каталоге пользователя
+                for buf_str in cur_config:
+                    remote_file.write(buf_str+'\n')
 
+            finally:
+                remote_file.close()
+            
+#            if mode == 'local':
+#              res_report = self.my_txt_rep.json_to_txt(json_obj, remote_file, mode, self.local_reports_directory + user_name + '/txt/', backtest_file_name)
+#            else:
+#                remote_file = sftp.open ('/' + self.server_directory + self.server_backtests_directory+self.server_user_directory + self.server_reports_directory +buf_str[0] + '.conf', mode = 'w') # Путь к файлу
+#                res_report = self.my_txt_rep.json_to_txt(json_obj, remote_file, mode, self.server_reports_directory, backtest_file_name)
+            self.list_info.append("Created config file: ")
+            self.list_info.append(last_f_name[0] + '.conf')
+            
+            self.list_info.append('________________________________________')
+            rep_done =True
+            sftp.close()
+            #for val_ls in self.list_info:
+            #    print(val_ls)
+        else:
+            return 'error'
+            
     def normalyze_percents(self, num: str):
        buf = round(float(num)/100, 4)
        str_num = str(buf)
        return str_num
 
+    def get_data_range(self):
+        #start_date = datetime.datetime.date(2022, 12, 10)
+        #end_date = datetime.datetime.date(2023, 1, 9)
+        start_date  = datetime.strptime("2022-12-10", '%Y-%m-%d')
+        end_date = datetime.strptime("2023-01-09", '%Y-%m-%d')
+        my_rep = rep_from_test_res() #создаем объект нашего собственного класса rep_from_test_res()
+        for i in range(self.num_try):
+            client = self.get_ssh_connect() #создаем ssh-подключение
+            if client != 'error':
+                break
+        if client == 'error':
+            self.list_info.append("SSH connect to server fail after " + str(self.num_try) + " tries... (run_report)")
+            self.list_info.append('________________________________________')
+            return 'error'
+        
+        f_pair_name = 'BTC_USDT'
+        df_pair_1m = my_rep.get_pair_fdata(f_pair_name, '1m', client)
+        print(df_pair_1m)
+        start_date = df_pair_1m['date'].iloc[0]
+        end_date = df_pair_1m['date'].iloc[-1]
+        
+        return start_date, end_date
+        
     def param_of_cur_strategy(self, user_strategy_settings):
         
            buf_str = self.get_strategy(user_strategy_settings["f_strategies"])
+           if buf_str == 'error':
+               buf_str = 'MyLossTrailingMinROI_4_4'
            buf_str = buf_str + '_config.py'
 #           user_strategy_settings["f_reports"] = os.getcwd()
            f_path = './crypto_back/templates/conf_strategies/' + buf_str
            roi_flag = False
            roi_counter = 0
             
-           user_strategy_settings["f_max_open_trades"] = 3
+           user_strategy_settings["f_start_d"], user_strategy_settings["f_stop_d"] = self.get_data_range()
+            
+           user_strategy_settings["f_max_open_trades"] = 5
            if os.path.exists(f_path):
                with open(f_path, 'r') as f:
                    user_strategy_settings["f_parts"] = list('1')
                    for line in f:
                        line = line.strip()
-#                       print(line)
+                       #print(line)
                        if ('arg_N' in line):
                            pars_str = line.split('=')
                            buf = pars_str[1].strip()
                            
                            if buf == "'none'":
-                               user_strategy_settings["f_series_len"] = '0'
+                               user_strategy_settings["f_series_len"] = 0
                            else: 
                                user_strategy_settings["f_series_len"] = pars_str[1].strip()
+                           
+                       if ('arg_T' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           
+                           if buf == "'none'":
+                               user_strategy_settings["f_series_len_beepboop"] = 0
+                           else: 
+                               user_strategy_settings["f_series_len_beepboop"] = pars_str[1].strip()
                            
                        if ('arg_R' in line):
                            pars_str = line.split('=')
                            buf = pars_str[1].strip()
                            if buf == "'none'":
-                               user_strategy_settings["f_persent_same"] = '0'
+                               user_strategy_settings["f_persent_same"] = 0
                            else: 
                                user_strategy_settings["f_persent_same"] = pars_str[1].strip()
 
@@ -699,7 +903,7 @@ class BackTestApp():
                            pars_str = line.split('=')
                            buf = pars_str[1].strip()
                            if buf == "'none'":
-                               user_strategy_settings["f_price_inc"] = '0'
+                               user_strategy_settings["f_price_inc"] = 0
                            else: 
                                user_strategy_settings["f_price_inc"] = pars_str[1].strip()
 
@@ -707,17 +911,40 @@ class BackTestApp():
                            pars_str = line.split('=')
                            buf = pars_str[1].strip()
                            if buf == "'none'":
-                               user_strategy_settings["f_movement_roi"] = '0'
+                               user_strategy_settings["f_movement_roi"] = 0
                            else: 
                                buf = round((float(pars_str[1].strip())*100), 3)
                                user_strategy_settings["f_movement_roi"] = buf
+                               
+                       if ('arg_min_roi' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == "'none'":
+                               user_strategy_settings["f_min_roi_beepboop"] = 0
+                           else: 
+                               buf = round((float(pars_str[1].strip())*100), 3)
+                               user_strategy_settings["f_min_roi_beepboop"] = buf
+                               
+                       if ('my_force_exit' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == "'none'":
+                               user_strategy_settings["f_my_force_exit_time"] = '0'
+                               user_strategy_settings["f_my_force_exit_value"] = '0'
+                           else: 
+                               pars_str = pars_str[1].split('[')
+                               pars_str = pars_str[1].split(']')
+                               pars_str = pars_str[0].split(',')
+                               user_strategy_settings["f_my_force_exit_time"] = pars_str[0].strip()
+                               buf = (round(abs(float(pars_str[1].strip())*100), 3))
+                               user_strategy_settings["f_my_force_exit_value"] = buf
 
                        if ('stoploss' in line):
                            pars_str = line.split('=')
                            if pars_str[0].strip() == 'stoploss' :
                                buf = pars_str[1].strip()
                                if buf == "'none'":
-                                   user_strategy_settings["f_stop_loss"] = '0'
+                                   user_strategy_settings["f_stop_loss"] = 0
                                else: 
                                    buf = (round(abs(float(pars_str[1].strip())*100), 3))
                                    user_strategy_settings["f_stop_loss"] = buf
@@ -726,7 +953,7 @@ class BackTestApp():
                            pars_str = line.split('=')
                            buf = pars_str[1].strip()
                            if buf == "'none'":
-                               user_strategy_settings["f_des_stop_loss"] = '0'
+                               user_strategy_settings["f_des_stop_loss"] = 0
                            else: 
                                buf = (round(float(pars_str[1].strip())*100, 3))
                                user_strategy_settings["f_des_stop_loss"] = buf
@@ -744,6 +971,16 @@ class BackTestApp():
                                user_strategy_settings["f_my_stop_loss_time"] = pars_str[0].strip()
                                buf = (round(abs(float(pars_str[1].strip())*100), 3))
                                user_strategy_settings["f_my_stop_loss_value"] = buf
+                               
+                       if ('arg_max_loss' in line):
+                           pars_str = line.split('=')
+                           if pars_str[0].strip() == 'arg_max_loss' :
+                               buf = pars_str[1].strip()
+                               if buf == "'none'":
+                                   user_strategy_settings["f_loss_beepboop"] = 0
+                               else: 
+                                   buf = (round(abs(float(pars_str[1].strip())*100), 3))
+                                   user_strategy_settings["f_loss_beepboop"] = buf
 
                        if ('minimal_roi' in line):
                            roi = []
@@ -805,7 +1042,50 @@ class BackTestApp():
                            buf = pars_str[1].strip()
                            user_strategy_settings["f_sell_cci"] = buf
                            
-                        #for Smooth Scalp strategy
+                       if ('slow_len_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_slow_len"] = buf
+                       if ('fast_len_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_fast_len"] = buf
+                           
+                       #for Beep Boop strategy
+                       if ('ema_trend_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_ema_trend"] = buf
+                       if ('source_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           user_strategy_settings["f_source"] = buf 
+                       if ('sma_source_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_sma_source_enable"] = buf
+                       if ('sma_signal_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_sma_signal_enable"] = buf
+                       if ('ema_signal_enable_val' in line):
+                           pars_str = line.split('=')
+                           buf = pars_str[1].strip()
+                           if buf == 'True':
+                               buf = True
+                           else:
+                               buf = False
+                           user_strategy_settings["f_ema_signal_enable"] = buf
+                           
+                       #for Smooth Scalp strategy
                        if ('buy_adx_val' in line):
                            pars_str = line.split('=')
                            buf = pars_str[1].strip()

@@ -1,10 +1,13 @@
 from django import forms
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
+import datetime
 
 from .models import AdvUser, AllBackTests
 from .strategies_list import Available_strategies
 from .apps import user_registered
+
+version = 2.2
 
 class UserForm(forms.Form):
     name = forms.CharField()
@@ -57,6 +60,8 @@ class RegisterUserForm(forms.ModelForm):
 
 strategies_value = Available_strategies.strategies_names_tuple #[('0', 'none')]
 reports_value = [('0', 'none')]
+source_value = [('0', 'close'), ('1', 'open'), ('2', 'hight'), ('3', 'low')]
+
 #strategies_value = [('1', 'Strategy-1'), ('2', 'Strategy-2'), ('3', 'Strategy-3'), ('4', 'Strategy-4'), ('5', 'Strategy-5')]
 #reports_value = [('1', 'Report-1'), ('2', 'Report-2'), ('3', 'Report-3'), ('4', 'Report-4'), ('5', 'Report-5')]
 
@@ -82,19 +87,25 @@ class CreateReportForm(forms.Form):
     f_text_log = forms.CharField(widget= forms.Textarea(attrs={'rows':'5', 'cols':90}), disabled = True, required=False)
 
 class BackTestForm(forms.Form):
+
 #    f_strategies = forms.ChoiceField(label="Strategies:", initial='0', choices = strategies_value, required=True)
     f_strategies = forms.CharField(label="Strategy:", initial='none', disabled = True, required=True)
     f_reports = forms.ChoiceField(label="Test results:", initial='0', choices = reports_value, required=False)
+    #YEARS= [x for x in range(2020,2022)]
+    yyy = range(2022, datetime.datetime.now().year + 1)
+    f_start_data = forms.DateField(label="Start data", initial= "2022-12-10", widget = forms.SelectDateWidget(years=yyy))
+    f_stop_data = forms.DateField(label="Stop data", initial= "2023-02-10", widget = forms.SelectDateWidget(years=yyy))
+    
     f_parts = forms.ChoiceField(label="Choise pairs part:", initial=1, choices=((1, "Part 1"), (2, "Part 2"), (3, "Part 3"), (4, "Part 4")), widget=forms.RadioSelect, required=False)
     
     f_series_len = forms.IntegerField(label="Series length (N):", initial=4, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
-    f_price_inc = forms.DecimalField(label="Price incriase in N candles (P):", initial=4.0,  min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_price_inc = forms.DecimalField(label="Price incriase in N candles (P):", initial=4.0,  min_value=-100, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     f_persent_same = forms.IntegerField(label="Persen of same candles (R):", initial=80, min_value=0, max_value=100, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     
-    f_min_roi_time1 = forms.IntegerField(initial=0, min_value=0, max_value=60, widget=forms.NumberInput( attrs={'size':'3'}), disabled = True, required=False)
-    f_min_roi_time2 = forms.IntegerField(initial=24, min_value=0, max_value=60, widget=forms.NumberInput( attrs={'size':'3'}), disabled = True, required=False)
-    f_min_roi_time3 = forms.IntegerField(initial=30, min_value=0, max_value=60, widget=forms.NumberInput( attrs={'size':'3'}), disabled = True, required=False)
-    f_min_roi_time4 = forms.IntegerField(initial=60, min_value=0, max_value=60, widget=forms.NumberInput( attrs={'size':'3'}), disabled = True, required=False)
+    f_min_roi_time1 = forms.IntegerField(initial=0, min_value=0, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_min_roi_time2 = forms.IntegerField(initial=24, min_value=0, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_min_roi_time3 = forms.IntegerField(initial=30, min_value=0, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_min_roi_time4 = forms.IntegerField(initial=60, min_value=0, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     f_min_roi_value1 = forms.DecimalField(initial=4.5, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     f_min_roi_value2 = forms.DecimalField(initial=0, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     f_min_roi_value3 = forms.DecimalField(initial=0, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
@@ -104,8 +115,11 @@ class BackTestForm(forms.Form):
     
     f_des_stop_loss = forms.DecimalField(label="Dsired Stop-loss value (S):", min_value=0, max_value=100, initial=0.5, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     f_stop_loss = forms.DecimalField(label="Stop-loss (after 0 min):", min_value=0, max_value=100, initial=3.0, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
-    f_my_stop_loss_time = forms.IntegerField(label="My Stop-loss (after [n] min):", initial=32,  min_value=0, max_value=60, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_my_stop_loss_time = forms.IntegerField(label="My Stop-loss (after [n] min):", initial=32,  min_value=0, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     f_my_stop_loss_value = forms.DecimalField(initial=0.1, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    
+    f_my_force_exit_time = forms.IntegerField(label="Force exit (after [n] min, with ROI):", initial=32,  min_value=0, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_my_force_exit_value = forms.DecimalField(initial=0.1, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     
     f_movement_roi = forms.DecimalField(label="Movement ROI (MR):", initial=2.5, min_value=0, max_value=100, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     
@@ -113,8 +127,22 @@ class BackTestForm(forms.Form):
     f_hyperopt = forms.BooleanField(label="Hyper Opt", required=False)
 
     # for MACD strategy
-    f_buy_cci = forms.IntegerField(label="Buy side: CCI between -700 and 0: ", initial= -50, min_value=-700, max_value=0, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
-    f_sell_cci = forms.IntegerField(label="Sell side: CCI between 0 and 700: ", initial=100, min_value=0, max_value=700, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_buy_cci = forms.IntegerField(label="Buy side: CCI between -700 and 0: ", initial= -48, min_value=-700, max_value=0, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_sell_cci = forms.IntegerField(label="Sell side: CCI between 0 and 700: ", initial=687, min_value=0, max_value=700, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    
+    f_fast_len = forms.IntegerField(label="Shorter-term period MA, between 2 and 51: ", initial= 12, min_value=2, max_value=51, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_slow_len = forms.IntegerField(label="Longer-term period MA, between 3 and 52: ", initial=26, min_value=3, max_value=52, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    
+    #for Beep Boop strategy
+    f_ema_trend = forms.IntegerField(label="EMA Trend, between 30 and 600: ", initial=50, min_value=30, max_value=600, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_source = forms.ChoiceField(label="Source of data:", initial='0', choices = source_value, required=False)
+    f_sma_source_enable = forms.BooleanField(label="SMA source enable: ", initial=False, required=False)
+    f_sma_signal_enable = forms.BooleanField(label="SMA signal enable: ", initial=False, required=False)
+    f_ema_signal_enable = forms.BooleanField(label="EMA signal enable: ", initial=False, required=False)
+    
+    f_series_len_beepboop = forms.IntegerField(label="Beep Boop Series length (T):", initial=4, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_min_roi_beepboop = forms.DecimalField(label="Beep Boop ROI:", min_value=0, max_value=100, initial=3.0, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
+    f_loss_beepboop = forms.DecimalField(label="Beep Boop Loss:", min_value=0, max_value=100, initial=3.0, decimal_places=1, widget=forms.NumberInput( attrs={'size':'3'}), required=False)
     
     #for Smooth Scalp strategy
     f_buy_adx = forms.IntegerField(label="Buy side: ADX between 20 and 50: ", initial= 32, min_value=20, max_value=50, widget=forms.NumberInput( attrs={'size':'2'}), required=False)

@@ -1,9 +1,11 @@
 import json
 import pandas as pd
 
+from .strategies_list import Available_strategies
+
 class my_reports():
 
-    def json_to_txt(self, json_obj, f, mode= 'local', directory:str='', f_name:str = ''):
+    def json_to_txt(self, json_obj, conf_obj, f, mode= 'local', directory:str='', f_name:str = ''):
         
         #загрузка данных о сделках из файла с результатами BackTest
         if mode == 'local':
@@ -231,5 +233,72 @@ class my_reports():
         f.write(buf_str)
         buf_str = str('=====================================================')
         f.write(buf_str)
+        
+        buf_str = '\n\n'
+        f.write(buf_str)
+        
+        
+        buf_list = conf_obj        
+        ignor_ = Available_strategies.ignor_list
+#        for i in buf_list:
+#            print('buf_list: ', i)
+        if cur_strategy in ['MyLossTrailingMinROI_4_4', 'MyLossTrailingMinROI_4_4_dump', 'MyLossTrailingMinROI_4_4_v3',
+                        'MyLossTrailingMinROI_5_5', 'MyLossTrailingMinROICurve', 'MyLossTrailingMinROI_N_Green', 'MyLossTrailingMinROI_N_Red']:
+            ignor_list = dict(ignor_)['MyLossTrailingMinROI_4_4']
+            #print(ignor_list)
+            #['buy_cci', 'sell_cci', 'buy_adx', 'buy_adx_enable', 'sell_adx', 'sell_adx_enable', 'buy_fastd', 'buy_fastd_enable', 'sell_fastd', 
+            #            'sell_fastd_enable', 'buy_fastk', 'buy_fastk_enable', 'sell_fastk', 'sell_fastk_enable', 'buy_mfi', 'buy_mfi_enable', 
+            #            'sell_mfi', 'sell_mfi_enable', 'sell_cci_scalp', 'sell_cci_scalp_enable', 
+            #            'slow_len', 'fast_len', 'ema_trend', 'source', 'sma_source_enable', 'sma_signal_enable', 'ema_signal_enable']
+            for buf_str in buf_list:
+                ignor_flag = 0
+                
+               
+                for ignor in ignor_list:
+                    if ignor in buf_str:
+                        ignor_flag = 1
+                #print('ignor_flag: ', ignor_flag, '   ', buf_str)        
+                if ignor_flag == 0:
+                    f.write(str(buf_str)+'\n')
+                
+        
+        if cur_strategy == 'MyReinforcedSmoothScalp_v2':
+            ignor_list = dict(ignor_)['MyReinforcedSmoothScalp_v2']# ['buy_cci', 'sell_cci', 'slow_len', 'fast_len', 'ema_trend', 'source', 'sma_source_enable', 'sma_signal_enable', 'ema_signal_enable']
+            for buf_str in buf_list:
+                ignor_flag = 0
+                for ignor in ignor_list:
+                    if ignor in buf_str:
+                        ignor_flag = 1
+                if ignor_flag == 0:
+                    f.write(str(buf_str)+'\n')
+                    
+        if cur_strategy == 'MyMACDStrategy':
+            ignor_list = dict(ignor_)['MyMACDStrategy'] #['buy_adx', 'buy_adx_enable', 'sell_adx', 'sell_adx_enable', 'buy_fastd', 'buy_fastd_enable', 'sell_fastd', 'sell_fastd_enable', 
+                       # 'buy_fastk', 'buy_fastk_enable', 'sell_fastk', 'sell_fastk_enable', 'buy_mfi',
+                       # 'buy_mfi_enable', 'sell_mfi', 'sell_mfi_enable', 'sell_cci_scalp', 'sell_cci_scalp_enable', 
+                       # 'slow_len', 'fast_len', 'ema_trend', 'source', 'sma_source_enable', 'sma_signal_enable', 'ema_signal_enable']
+            for buf_str in buf_list:
+                ignor_flag = 0
+               
+                for ignor in ignor_list:
+                    if ignor in buf_str:
+                        ignor_flag = 1
+                if ignor_flag == 0:
+                    f.write(str(buf_str)+'\n')
+        print('Cur_strategy: ', cur_strategy)            
+        if cur_strategy in ['MyBeepBoop', 'MyBeepBoop_v3', 'MyBeepBoop_v4']:
+            ignor_list = dict(ignor_)['MyBeepBoop'] #['buy_cci', 'sell_cci', 'buy_adx', 'buy_adx_enable', 'sell_adx', 'sell_adx_enable', 'buy_fastd', 'buy_fastd_enable', 'sell_fastd', 
+                        #'sell_fastd_enable', 'buy_fastk', 'buy_fastk_enable', 'sell_fastk', 'sell_fastk_enable', 'buy_mfi', 'buy_mfi_enable', 
+                        #'sell_mfi', 'sell_mfi_enable', 'sell_cci_scalp', 'sell_cci_scalp_enable']
+            print('If enter')
+            for buf_str in buf_list:
+                ignor_flag = 0
+                for ignor in ignor_list:
+                    if ignor in buf_str:
+                        ignor_flag = 1
+                if ignor_flag == 0:
+                    print(buf_str)
+                    f.write(str(buf_str)+'\n')
+
 
         f.close()    

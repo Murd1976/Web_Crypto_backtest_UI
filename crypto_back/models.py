@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+version = 2.2
+
 class AdvUser(AbstractUser):
     is_activated = models.BooleanField(default = True, db_index = True, verbose_name = 'Has been activated ?')
     send_messages = models.BooleanField(default = True, verbose_name = 'Send update messages ?')
@@ -13,6 +15,9 @@ class AllBackTests(models.Model	):
     strategy_name = models.CharField(max_length=50, verbose_name='Strategy.')
     owner = models.ForeignKey(AdvUser, verbose_name='Test owner.', on_delete = models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Test data.')
+    
+    start_data = models.DateField(auto_now_add=False, verbose_name='Strat data')
+    stop_data = models.DateField(auto_now_add=False, verbose_name='Stop data')
     
     parts = minimal_roi1_time = models.IntegerField(verbose_name="Pairs part")
     minimal_roi1_time = models.IntegerField()
@@ -36,9 +41,27 @@ class AllBackTests(models.Model	):
     text_log = models.TextField(verbose_name="Loggin text")
     hyperopt = models.BooleanField(verbose_name="Hyper opt", default=False)
     
+    my_force_exit_time = models.IntegerField(verbose_name="My Force exit time (after [n] min)", default = 0)
+    my_force_exit_value = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="My Force exit value (after [n] min)", default = 0.0)
+    
     # for MACD strategy
     buy_cci = models.IntegerField(verbose_name="Buy side: CCI between -700 and 0:")
     sell_cci = models.IntegerField(verbose_name="Sell side: CCI between 0 and 700:")
+    
+    fast_len = models.IntegerField(verbose_name="Shorter-term period MA, between 2 and 51: ")
+    slow_len = models.IntegerField(verbose_name="Longer-term period MA, between 3 and 52: ")
+    
+    #for Beep Boop strategy
+    ema_trend = models.IntegerField(verbose_name="EMA Trend, between 3 and 52: ")
+    source = models.CharField(max_length=50, verbose_name="Source of data:")
+    sma_source_enable = models.BooleanField(verbose_name="SMA source enable: ", default=False)
+    sma_signal_enable = models.BooleanField(verbose_name="SMA signal enable: ", default=False)
+    ema_signal_enable = models.BooleanField(verbose_name="EMA signal enable: ", default=False)
+    
+    series_len_beepboop = models.IntegerField(verbose_name="Beep Boop Series length (T)", default= 4)
+    min_roi_beepboop = models.DecimalField(verbose_name="Beep Boop ROI:", max_digits=3, decimal_places=1, default= 2.0)
+    loss_beepboop = models.DecimalField(verbose_name="Beep Boop Loss", max_digits=3, decimal_places=1, default= 2.0)
+    
     
     #for Smooth Scalp strategy
     buy_adx = models.IntegerField(verbose_name="Buy side: ADX between 20 and 50: ")

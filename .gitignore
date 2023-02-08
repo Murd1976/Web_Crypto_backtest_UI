@@ -1,5 +1,7 @@
 *.log 
 redis.*
+crypto_back/beep_boop.php
+.venv/
 celery/
 reports/
 crypto_back/__pycache__/
