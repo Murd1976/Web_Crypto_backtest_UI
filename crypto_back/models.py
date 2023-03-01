@@ -16,6 +16,8 @@ class AllBackTests(models.Model	):
     owner = models.ForeignKey(AdvUser, verbose_name='Test owner.', on_delete = models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Test data.')
     
+    timeframe = models.CharField(max_length=10, verbose_name="Time frame:", default = '1m')
+    
     start_data = models.DateField(auto_now_add=False, verbose_name='Strat data')
     stop_data = models.DateField(auto_now_add=False, verbose_name='Stop data')
     
@@ -41,8 +43,8 @@ class AllBackTests(models.Model	):
     text_log = models.TextField(verbose_name="Loggin text")
     hyperopt = models.BooleanField(verbose_name="Hyper opt", default=False)
     
-    my_force_exit_time = models.IntegerField(verbose_name="My Force exit time (after [n] min)", default = 0)
-    my_force_exit_value = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="My Force exit value (after [n] min)", default = 0.0)
+    my_force_exit_time = models.IntegerField(verbose_name="My Force exit time (after [n] candles)", default = 0)
+    my_force_exit_value = models.DecimalField(max_digits=3, decimal_places=1, verbose_name="My Force exit value", default = 0.0)
     
     # for MACD strategy
     buy_cci = models.IntegerField(verbose_name="Buy side: CCI between -700 and 0:")
@@ -61,6 +63,7 @@ class AllBackTests(models.Model	):
     series_len_beepboop = models.IntegerField(verbose_name="Beep Boop Series length (T)", default= 4)
     min_roi_beepboop = models.DecimalField(verbose_name="Beep Boop ROI:", max_digits=3, decimal_places=1, default= 2.0)
     loss_beepboop = models.DecimalField(verbose_name="Beep Boop Loss", max_digits=3, decimal_places=1, default= 2.0)
+    min_macd = models.DecimalField(verbose_name="Minimal MACD:", max_digits=7, decimal_places=1, default= -0.001)
     
     
     #for Smooth Scalp strategy

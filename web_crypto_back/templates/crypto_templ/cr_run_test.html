@@ -22,7 +22,7 @@
 	</div>
 
 <div class="conteiner-fluid">
-<form name="BackTestQuery" method="POST" novalidate="novalidate">
+<form name="BackTestQuery" method="POST">
   {% csrf_token %}
 <!-- Row number one --> 
   <div class="row border">
@@ -34,7 +34,7 @@
 			</div>
 			<div class="col-2">&nbsp</div>
 			<div class="col-4">
-			  {{ form.f_reports.label_tag }}
+			  <b>{{ form.f_timeframe.label_tag }}</b>
 			</div>
 		</div>
 		<div class="row ml-2">
@@ -43,7 +43,7 @@
             </div>
 			<div class="col-2">&nbsp </div>
 			<div class="col-4 form-inline">
-              {{ form.f_reports }}
+              {{ form.f_timeframe }}
 		    </div>
 		</div>
 		<div class="row">&nbsp</div>
@@ -247,7 +247,14 @@
 				<label>amount</label> 
 			</div>
 			
+			<div class="col-2 ">
+				{{ form.f_min_macd.label_tag }}
+			</div>
+			<div class="col ">
+				{{ form.f_min_macd }}
+			</div>
 		</div>
+		<div class="row">&nbsp</div>
 		
 	</div>
 

@@ -9,6 +9,7 @@ class config_strategy():
     arg_R =  85
     arg_P =  0.0
     arg_MR =  0.004
+    my_force_exit = np.array([180, 0.002])
     stoploss = -0.007
     my_stoploss = np.array([32, -0.003])
     arg_stoploss =  0.002
@@ -30,6 +31,7 @@ class config_strategy():
     arg_T = 0
     arg_min_roi = 0.0
     arg_max_loss = -0.0
+    min_macd = -0.00
 #
 # for Smooth Scalp strategy
     buy_adx_val =  32
@@ -57,3 +59,4 @@ class config_strategy():
 #
 # for Hyper opt
     hyperopt =  False
+

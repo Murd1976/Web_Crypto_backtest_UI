@@ -1,4 +1,5 @@
 *.log 
+*.logD
 redis.*
 crypto_back/beep_boop.php
 .venv/

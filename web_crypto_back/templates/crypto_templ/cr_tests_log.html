@@ -14,16 +14,17 @@
 	 <th>Data</th>
 	 <th>Start data</th>
 	 <th>Stop data</th>
+     <th>Time frame</th>
 	 <th>Parts</th> 
 	 <th>MaxOT</th>
 	 <th>arg_N</th>
-     <th>min_ROI_0</th>
-     <th>min_ROI_24</th>
-     <th>min_ROI_30</th>
-     <th>min_ROI_60</th>
+     <th>ROI_1</th>
+     <th>ROI_2</th>
+     <th>ROI_3</th>
+     <th>ROI_4</th>
      <th> MR </th>
-     <th>StopLoss</th>
-     <th>My StopLoss</th>
+     <th>SLoss</th>
+     <th>My SLoss</th>
      <th>( S )</th>
 	 <th>HyperOpt</th>
 	 <th>Delete</th>
@@ -35,6 +36,7 @@
 	 <td>{{record.created_at}}</td>
 	 <td>{{record.start_data}}</td>
 	 <td>{{record.stop_data}}</td>
+     <td align="center">{{record.timeframe}}</td>
 	 <td align="center">{{record.parts}}</td>
 	 <td align="center">{{record.max_open_trades}}</td>
 	 <td align="center">{{record.arg_N}}</td>
@@ -54,3 +56,4 @@
 
 </div>
 {% endblock %}
+

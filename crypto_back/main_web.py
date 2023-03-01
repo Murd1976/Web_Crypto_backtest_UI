@@ -348,6 +348,7 @@ class BackTestApp():
             self.list_info.append("Creating report, please wait... ")
             buf_str = backtest_file_name.split('.')
             
+            print('/' + self.server_directory + self.server_backtests_directory +self.server_user_directory + '/' + buf_str[0] + '.conf')
             conf_part = sftp.open ('/' + self.server_directory + self.server_backtests_directory +self.server_user_directory + '/' + buf_str[0] + '.conf', mode = 'r') # Путь к файлу config
             conf_obj = []
             for line in conf_part:
@@ -404,6 +405,7 @@ class BackTestApp():
             stop_d = user_strategy_settings["f_stop_data"].split('T')[0].replace('-', '')
             print(start_d)
             print(stop_d)
+            print('Timeframe: ', user_strategy_settings["f_timeframe"])
             time_range = " --timerange=" + start_d.strip('-') + "-" + stop_d.strip('-')
             max_open_trades = ' --max-open-trades ' + str(user_strategy_settings["f_max_open_trades"])
             if user_strategy_settings["f_series_len"] > 0:
@@ -415,7 +417,7 @@ class BackTestApp():
 
             strategy = " -s "+ buf_str
             
-            run_str = "docker-compose run --rm freqtrade backtesting " + datadir + export + config + time_range + max_open_trades + export_filename + strategy
+            run_str = "docker-compose run --rm freqtrade backtesting " + datadir + export + config + time_range + max_open_trades + export_filename + strategy + ' -i ' + user_strategy_settings["f_timeframe"]
             print(run_str)
             self.list_info.append('Command line for run test:')
             self.list_info.append(run_str)
@@ -433,6 +435,13 @@ class BackTestApp():
         buf_str = '    start_data = ' + start_d
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
         buf_str = '    stop_data = ' + stop_d
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        
+        buf_str = '#'
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    timeframe = ' + "'" + user_strategy_settings["f_timeframe"] + "'"
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '#'
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
         
         buf_str = '    minimal_roi = { '
@@ -454,6 +463,12 @@ class BackTestApp():
         if user_strategy_settings["f_min_roi_value4"] > 0:
             buf_str = '        "' + str(user_strategy_settings["f_min_roi_time4"]) + '":  ' + self.normalyze_percents(user_strategy_settings["f_min_roi_value4"])
             strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+            
+        if ((user_strategy_settings["f_min_roi_value1"] <= 0) & (user_strategy_settings["f_min_roi_value2"] <= 0) & 
+           (user_strategy_settings["f_min_roi_value3"] <= 0) & (user_strategy_settings["f_min_roi_value4"] <= 0)):
+            buf_str = '        "0":  10'
+            strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+           
 
         buf_str = '    }'
         
@@ -535,6 +550,8 @@ class BackTestApp():
         buf_str = '    slow_len =  ' + str(user_strategy_settings["f_slow_len"])
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
         buf_str = '    fast_len =  ' + str(user_strategy_settings["f_fast_len"])
+        strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
+        buf_str = '    min_macd =  ' + str(user_strategy_settings["f_min_macd"])
         strategy_settings = pd.concat([strategy_settings, pd.Series([buf_str])], ignore_index = True)
         
         buf_str = '#'
@@ -847,7 +864,8 @@ class BackTestApp():
         
         f_pair_name = 'BTC_USDT'
         df_pair_1m = my_rep.get_pair_fdata(f_pair_name, '1m', client)
-        print(df_pair_1m)
+        print('For range detection used ', f_pair_name)
+        #print(df_pair_1m)
         start_date = df_pair_1m['date'].iloc[0]
         end_date = df_pair_1m['date'].iloc[-1]
         
@@ -1084,6 +1102,16 @@ class BackTestApp():
                            else:
                                buf = False
                            user_strategy_settings["f_ema_signal_enable"] = buf
+                           
+                       if ('min_macd' in line):
+                           pars_str = line.split('=')
+                           if pars_str[0].strip() == 'min_macd':
+                               buf = pars_str[1].strip()
+                               if buf == "'none'":
+                                   user_strategy_settings["f_min_macd"] = 0
+                               else:
+                                   buf = (round(float(pars_str[1].strip()), 5))
+                                   user_strategy_settings["f_min_macd"] = buf
                            
                        #for Smooth Scalp strategy
                        if ('buy_adx_val' in line):

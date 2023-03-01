@@ -251,6 +251,7 @@ def run_test_page(request):
     reports_list = list(zip(reports_index, reports_val))
     
     source_value = [('0', 'close'), ('1', 'open'), ('2', 'hight'), ('3', 'low')]
+    timeframe_value = [('0', '1m'), ('1', '5m'), ('2', '15m'), ('3', '30m'), ('4', '1h')]
 
     strategies_list = Available_strategies.strategies_names_tuple
     strategies_files = Available_strategies.strategies_file_tuple
@@ -261,8 +262,8 @@ def run_test_page(request):
                          'f_text_log', 'f_max_open_trades', 'f_hyperopt',
                          'f_buy_cci', 'f_sell_cci', 'f_buy_adx', 'f_buy_adx_enable', 'f_sell_adx', 'f_sell_adx_enable', 'f_buy_fastd', 'f_buy_fastd_enable', 'f_sell_fastd', 'f_sell_fastd_enable', 
                          'f_buy_fastk', 'f_buy_fastk_enable', 'f_sell_fastk', 'f_sell_fastk_enable', 'f_buy_mfi', 'f_buy_mfi_enable', 'f_sell_mfi', 'f_sell_mfi_enable', 'f_sell_cci_scalp', 'f_sell_cci_scalp_enable',
-                         'f_slow_len', 'f_fast_len', 'f_ema_trend', 'f_source', 'f_sma_source_enable', 'f_sma_signal_enable', 'f_ema_signal_enable', 'f_series_len_beepboop', 'f_min_roi_beepboop', 'f_loss_beepboop',
-                         'f_start_data', 'f_stop_data', 'f_start_d', 'f_stop_d', 'f_my_force_exit_time', 'f_my_force_exit_value']
+                         'f_slow_len', 'f_fast_len', 'f_ema_trend', 'f_source', 'f_sma_source_enable', 'f_sma_signal_enable', 'f_ema_signal_enable', 'f_series_len_beepboop', 'f_min_roi_beepboop', 'f_loss_beepboop', 'f_min_macd',
+                         'f_start_data', 'f_stop_data', 'f_start_d', 'f_stop_d', 'f_my_force_exit_time', 'f_my_force_exit_value', 'f_timeframe']
     p = []
 
     data_bufer = DataBufer.objects.filter(name=request.user)
@@ -276,11 +277,11 @@ def run_test_page(request):
     if request.method == "POST":
         text_buf = "Name of strategy: "
         userform = BackTestForm(request.POST or None)
-        
+        #print(userform)
         if userform.is_valid():
             pp = p.copy()
             
-            for b in range(58):
+            for b in range(60):
                 pp.append('')
             strategy_settings = dict(list(zip(strategy_keys, pp)))
             strategy_settings = ui_utils.param_of_cur_strategy(strategy_settings)
@@ -306,7 +307,7 @@ def run_test_page(request):
                 p.append(int(strategy_settings["f_persent_same"]))
                 p.append(float(strategy_settings["f_price_inc"]))
             else:
-                if dict(strategies_list)[user_strategy_choise] in ['BeepBoop Strategy', 'BeepBoop Strategy v2']:
+                if dict(strategies_list)[user_strategy_choise] in ['BeepBoop Strategy']:
                     p.append(int(userform.cleaned_data["f_series_len"]))
                     p.append(int(strategy_settings["f_persent_same"]))
                     p.append(float(strategy_settings["f_price_inc"]))
@@ -404,6 +405,11 @@ def run_test_page(request):
                 p.append(userform.cleaned_data["f_sma_signal_enable"])
                 p.append(userform.cleaned_data["f_ema_signal_enable"])
                 
+                p.append(int(userform.cleaned_data["f_series_len_beepboop"]))
+                p.append(float(userform.cleaned_data["f_min_roi_beepboop"]))
+                p.append(float(userform.cleaned_data["f_loss_beepboop"]))
+                p.append(float(userform.cleaned_data["f_min_macd"]))
+                '''
                 if dict(strategies_list)[user_strategy_choise] in ['BeepBoop Strategy v3']:
                     p.append(int(userform.cleaned_data["f_series_len_beepboop"]))
                     p.append(float(userform.cleaned_data["f_min_roi_beepboop"]))
@@ -412,6 +418,7 @@ def run_test_page(request):
                     p.append(int(strategy_settings["f_series_len_beepboop"]))
                     p.append(float(strategy_settings["f_min_roi_beepboop"]))
                     p.append(float(strategy_settings["f_loss_beepboop"]))
+                '''
             else:
                 p.append(int(strategy_settings["f_slow_len"]))
                 p.append(int(strategy_settings["f_fast_len"]))
@@ -424,6 +431,7 @@ def run_test_page(request):
                 p.append(int(strategy_settings["f_series_len_beepboop"]))
                 p.append(float(strategy_settings["f_min_roi_beepboop"]))
                 p.append(float(strategy_settings["f_loss_beepboop"]))
+                p.append(float(strategy_settings["f_min_macd"]))
              
             s1, s2 = check_date(userform.cleaned_data["f_start_data"], userform.cleaned_data["f_stop_data"], strategy_settings["f_start_d"], strategy_settings["f_stop_d"])
             p.append(s1)
@@ -433,6 +441,9 @@ def run_test_page(request):
             
             p.append(userform.cleaned_data["f_my_force_exit_time"])
             p.append(float(userform.cleaned_data["f_my_force_exit_value"]))
+            p.append(dict(timeframe_value)[userform.cleaned_data["f_timeframe"]])
+            
+            
                 
             print(p)
             print()
@@ -447,8 +458,12 @@ def run_test_page(request):
                                             buy_fastk= p[32], buy_fastk_enable= p[33], sell_fastk= p[34], sell_fastk_enable= p[35], 
                                             buy_mfi= p[36], buy_mfi_enable= p[37], sell_mfi= p[38], sell_mfi_enable= p[39], 
                                             sell_cci_scalp= p[40], sell_cci_scalp_enable= p[41], slow_len= p[42], fast_len= p[43], ema_trend= p[44], source= p[45], 
-                                            sma_source_enable= p[46], sma_signal_enable= p[47], ema_signal_enable= p[48], series_len_beepboop= p[49], min_roi_beepboop= p[50], loss_beepboop= p[51],
-                                            start_data = p[52], stop_data = p[53], my_force_exit_time = p[56], my_force_exit_value = p[57])
+                                            sma_source_enable= p[46], sma_signal_enable= p[47], ema_signal_enable= p[48], series_len_beepboop= p[49], min_roi_beepboop= p[50], loss_beepboop= p[51], min_macd = p[52],
+                                            start_data = p[53], stop_data = p[54], my_force_exit_time = p[57], my_force_exit_value = p[58], timeframe = p[59])
+                                            
+            #for val in back_test_record:
+                #print(val)
+                
             back_test_record.save()
 
             strategy_settings = dict(list(zip(strategy_keys, p)))
@@ -469,7 +484,7 @@ def run_test_page(request):
             strategy_settings['f_strategies'] = dict(strategies_list)[user_strategy_choise]
             strategy_settings["f_text_log"] = str(request.user) + '/ ' + str(ui_utils.list_info)
 #            parts = BackTestForm(initial={"f_text_log":str(request.user) + '/ ' + str(ui_utils.list_info)})
-            print(len(strategy_settings))
+            #print(len(strategy_settings))
             print(strategy_settings, '\n')
             parts = BackTestForm(initial= strategy_settings)
 
@@ -491,7 +506,7 @@ def run_test_page(request):
     text_buf = str(ui_utils.list_info)
 #    p.append( "min_roi_trailing_loss_4_4.py")
 #    p.append(dict(strategies_files)[user_strategy_choise])
-    for b in range(58):
+    for b in range(60):
         p.append('')
     strategy_settings = dict(list(zip(strategy_keys, p)))
     strategy_settings = ui_utils.param_of_cur_strategy(strategy_settings)
@@ -499,13 +514,14 @@ def run_test_page(request):
     
 #    strategy_settings["f_text_log"] = strategy_settings
     strategy_settings['f_start_data'], strategy_settings['f_stop_data'] = check_date(strategy_settings['f_start_d'], strategy_settings['f_stop_d'], strategy_settings["f_start_d"], strategy_settings["f_stop_d"])
-    print(len(strategy_settings))
-    print(strategy_settings)
+    #print(len(strategy_settings))
+    #print(strategy_settings)
     parts = BackTestForm(initial= strategy_settings) #{"f_text_log":strategy_settings}) #text_buf})
     #parts.yyy = range(2017, 2019)
 #    parts = BackTestForm(initial= {"f_text_log":p[0]}) #text_buf})
     
-    #parts = set_fields_enable(strategy_settings['f_strategies'], parts)
+    parts = set_fields_enable(strategy_settings['f_strategies'], parts)
+    #parts.fields['f_buy_adx'].required = False
     #parts.fields['f_reports'].choices = reports_list
    
     context = {"form": parts, "start_data":strategy_settings['f_start_d'], "stop_data":strategy_settings['f_stop_d']}
@@ -513,7 +529,8 @@ def run_test_page(request):
 
 def check_date(start, stop, start_range, end_range):
     #s1 = datetime.datetime.strptime(start_range, '%Y-%m-%d')
-    #s2 = datetime.datetime.strptime(and_range, '%Y-%m-%d')
+    #s2 = datetime.datetime.strptime(and_range, '%Y-%m-%d')+
+    
     #a = start.split('-')
     #b = stop.split('-')
     s1 = start_range.date()
@@ -522,23 +539,24 @@ def check_date(start, stop, start_range, end_range):
         buf = start
         start = stop
         stop = buf
-    if start == stop :
-        stop += datetime.timedelta(days=1)
         
-    if start < start_range.date() :
+    if start == stop:
+        stop += datetime.timedelta(days=1)
+    #print()
+    if start < start_range.date():
         start_d = s1
     else:
-        if start >= end_range.date() :
+        if start >= end_range.date():
             start_d = s2 - datetime.timedelta(days=1)
         else:
             start_d = start
         
-    if stop > end_range.date() :
+    if stop > end_range.date():
         stop_d = s2
     else:
-        if stop <= start_range.date() :
+        if stop <= start_range.date():
             stop_d = s1 + datetime.timedelta(days=1)
-            print('Stop_d = ', stop_d)
+            #print('Stop_d = ', stop_d)
         else:
             stop_d = stop
     
